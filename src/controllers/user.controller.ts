@@ -227,3 +227,61 @@ export const getMyhomework = async (req: Request, res: Response) => {
         return handleError(res, error, "retrieving user homework");
     }
 }
+
+export const updateCredits = async (req: Request, res: Response) => {
+    try {
+        const { privateAmount, publicAmount, userId } = req.body;
+
+        // Input validation
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+
+        // Convert to numbers and validate
+        const privateCredits = Number(privateAmount);
+        const publicCredits = Number(publicAmount);
+
+        if (privateCredits < 0 || publicCredits < 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Credit amounts cannot be negative"
+            });
+        }
+
+        if (privateCredits === 0 && publicCredits === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "At least one credit amount must be provided"
+            });
+        }
+
+        // Find and update user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Update credits
+        user.PrivitelessonCredits += privateCredits;
+        user.PubliclessonCredits += publicCredits;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Credits updated successfully",
+            data: {
+                userId: user._id,
+                privateCredits: user.PrivitelessonCredits,
+                publicCredits: user.PubliclessonCredits
+            }
+        });
+    } catch (error) {
+        return handleError(res, error, "updating credits");
+    }
+}

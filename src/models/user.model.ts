@@ -15,7 +15,8 @@ export interface IUser extends Document {
     numOfPartsofQuran: number;
     isVerified: boolean;
     freeLessonUsed: boolean;
-    lessonCredits: number;
+    PrivitelessonCredits: number;
+    PubliclessonCredits: number;
     teacherProfile?: {
         specialization: string[];
         meetingLink: string;
@@ -44,8 +45,9 @@ const userSchema = new Schema<IUser>({
     quranMemorized: { type: String, default: '' },
     numOfPartsofQuran: { type: Number, default: 0 },
     isVerified: { type: Boolean, default: false },
-    freeLessonUsed: { type: Boolean, default: false },
-    lessonCredits: { type: Number, default: 0 },
+    freeLessonUsed: { type: Boolean, default: false },  
+    PrivitelessonCredits: { type: Number, default: 0 },
+    PubliclessonCredits: { type: Number, default: 0 },
     teacherProfile: {
         specialization: [{ type: String }],
         meetingLink: { type: String },
