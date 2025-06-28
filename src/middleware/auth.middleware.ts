@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../services/token.services';
-import { IUser, User } from '../models/user.model';
+import User, { IUser } from '../models/user.model';
 
 export interface AuthRequest extends Request {
   user?: IUser;
@@ -29,10 +29,10 @@ export const isAuthenticated = async (req: AuthRequest, res: Response, next: Nex
 };
 
 export const isVerified = (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user || !req.user.isVerified) {
-        return res.status(403).json({ message: 'Email not verified' });
-    }
-    next();
+  if (!req.user || !req.user.isVerified) {
+    return res.status(403).json({ message: 'Email not verified' });
+  }
+  next();
 };
 
 export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
