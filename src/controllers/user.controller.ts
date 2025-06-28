@@ -79,8 +79,6 @@ export const updateUserProfile = async (req: Request, res: Response) => {
 export const getStudentsForTeacher = async (req: Request, res: Response) => {
     try {
         const teacherId = (req as any).user._id;
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
 
         const teacher = await User.findById(teacherId);
         if (!teacher || teacher.role !== 'teacher') {
@@ -90,24 +88,17 @@ export const getStudentsForTeacher = async (req: Request, res: Response) => {
             });
         }
 
-        // Find students with pagination
+        // Find all students for this teacher
         const students = await User.find({ role: 'student', teacherId })
             .select('-password')
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        const total = await User.countDocuments({ role: 'student', teacherId });
+            .sort('-createdAt'); // Optional: sort by creation date
 
         return res.status(200).json({
             success: true,
             message: "Students retrieved successfully",
             data: {
                 students,
-                pagination: {
-                    currentPage: page,
-                    totalPages: Math.ceil(total / limit),
-                    totalStudents: total
-                }
+                total: students.length
             }
         });
     } catch (error) {
