@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
+import Lesson,{ILesson} from "../models/lesson.model";
+import Homework,{IHomework} from "../models/homework.model";
 
 // Custom error handler
 const handleError = (res: Response, error: any, message: string) => {
@@ -142,5 +144,86 @@ export const verifyUser = async (req: Request, res: Response) => {
         });
     } catch (error) {
         return handleError(res, error, "verifying user");
+    }
+}
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+        await User.findByIdAndDelete(userId);
+        return res.status(200).json({
+            success: true,
+            message: "User deleted successfully",
+        });
+    } catch (error) {
+        return handleError(res, error, "deleting user");
+    }
+}
+
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find().select('-password').sort('-createdAt'); // Exclude password and sort by creation date
+        return res.status(200).json({
+            success: true,
+            message: "All users retrieved successfully",
+            data: {
+                users,
+                total: users.length
+            }
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving all users");
+    }
+}
+
+export const getMylessons = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId).select('-password'); // Exclude password
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Assuming lessons are stored in a separate collection and linked to users
+        const lessons = await Lesson.find({ userId }).sort('-scheduledAt'); // Sort by scheduled date
+        
+        return res.status(200).json({
+            success: true,
+            message: "User lessons retrieved successfully",
+            data: lessons,
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving user lessons");
+    }
+}
+
+export const getMyhomework = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId).select('-password'); // Exclude password
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Assuming homework is stored in a separate collection and linked to users
+        const homework = await Homework.find({ userId }).sort('-assignedAt'); // Sort by assigned date
+        
+        return res.status(200).json({
+            success: true,
+            message: "User homework retrieved successfully",
+            data: homework,
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving user homework");
     }
 }
