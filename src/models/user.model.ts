@@ -9,7 +9,7 @@ export interface IUser extends Document {
     email: string;
     password: string; // hashed
     phone: string;
-    role: 'admin' | 'teacher' | 'student' | 'parent';
+    role: 'admin' | 'teacher' | 'student' ;
     age?: number;
     quranMemorized: string;
     numOfPartsofQuran: number;
@@ -39,7 +39,7 @@ const userSchema = new Schema<IUser>({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'teacher', 'student', 'parent'], default: 'student' },
+    role: { type: String, enum: ['admin', 'teacher', 'student'], default: 'student' },
     age: { type: Number, min: 0 },
     quranMemorized: { type: String, default: '' },
     numOfPartsofQuran: { type: Number, default: 0 },
