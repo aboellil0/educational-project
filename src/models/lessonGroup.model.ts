@@ -20,10 +20,10 @@ const lessonGroupSchema = new Schema<ILessonGroup>({
     name: { type: String, required: true },
     description: { type: String, required: true },
     type: { type: String, enum: ['private', 'public'], required: true },
-    teacherId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    teacherId: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true },
     members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    meetingLink: { type: String, required: true },
     lessons: [{ type: Schema.Types.ObjectId, ref: 'Lesson' }],
+    meetingLink: { type: String, required: true },
     isActive: { type: Boolean, default: true  },
 }, {
     timestamps: true

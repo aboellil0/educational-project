@@ -17,11 +17,6 @@ export interface IUser extends Document {
     freeLessonUsed: boolean;
     PrivitelessonCredits: number;
     PubliclessonCredits: number;
-    teacherProfile?: {
-        specialization: string[];
-        meetingLink: string;
-        availability: object;
-    };
     fcmToken?: string;
     googleId?: string;
     isEmailVerified?: boolean;
@@ -48,11 +43,6 @@ const userSchema = new Schema<IUser>({
     freeLessonUsed: { type: Boolean, default: false },  
     PrivitelessonCredits: { type: Number, default: 0 },
     PubliclessonCredits: { type: Number, default: 0 },
-    teacherProfile: {
-        specialization: [{ type: String }],
-        meetingLink: { type: String },
-        availability: { type: Object }
-    },
     fcmToken: { type: String },
     googleId: { type: String },
     isEmailVerified: { type: Boolean, default: false },
