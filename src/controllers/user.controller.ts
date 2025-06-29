@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import Lesson,{ILesson} from "../models/lesson.model";
-import Homework,{IHomework} from "../models/homework.model";
-
+import LessonReport,{ILessonReport} from "../models/lessonReport.model";
 // Custom error handler
 const handleError = (res: Response, error: any, message: string) => {
     console.error(`Error ${message}:`, error);
