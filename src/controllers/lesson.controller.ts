@@ -3,6 +3,7 @@ import { Schema, Types } from 'mongoose';
 import Lesson from '../models/lesson.model';
 import User from '../models/user.model';
 import LessonGroup from '../models/lessonGroup.model';
+import LessonReport from '../models/lessonReport.model';
 
 
 export class LessonController {
@@ -172,6 +173,73 @@ export class LessonController {
             }
 
             res.status(200).json({ message: 'Lesson deleted successfully' });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
+    }
+
+    async getLessonReports(req: Request, res: Response) {
+        try {
+            const lessonId = req.params.id;
+            if (!Types.ObjectId.isValid(lessonId)) {
+                return res.status(400).json({ message: 'Invalid lesson ID' });
+            }
+
+            const reports = await LessonReport.find({ lessonId })
+                .populate('studentId', 'name email')
+                .populate('teacherId', 'name email');
+
+            if (!reports) {
+                return res.status(404).json({ message: 'No reports found for this lesson' });
+            }
+
+            res.status(200).json(reports);
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
+    }
+
+    async getLessonReportById(req: Request, res: Response) {
+        try {
+            const reportId = req.params.id;
+            if (!Types.ObjectId.isValid(reportId)) {
+                return res.status(400).json({ message: 'Invalid report ID' });
+            }
+
+            const report = await LessonReport.findById(reportId)
+                .populate('studentId', 'name email')
+                .populate('teacherId', 'name email');
+
+            if (!report) {
+                return res.status(404).json({ message: 'Report not found' });
+            }
+
+            res.status(200).json(report);
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
+    }
+
+    async createLessonReport(req: Request, res: Response) {
+        try {
+            const lessonId = req.params.id;
+            const { studentId, attended, content, newMemorized } = req.body;
+
+            if (!Types.ObjectId.isValid(lessonId) || !Types.ObjectId.isValid(studentId)) {
+                return res.status(400).json({ message: 'Invalid IDs provided' });
+            }
+
+            const newReport = new LessonReport({
+
+                lessonId,
+                studentId,
+                attended,
+                content,
+                newMemorized
+            });
+
+            await newReport.save();
+            res.status(201).json(newReport);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
