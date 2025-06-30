@@ -7,26 +7,6 @@ import LessonReport from '../models/lessonReport.model';
 
 
 export class LessonController {
-    async getMyScheduledLessons(req: Request, res: Response) {
-        try {
-            const userId = (req as any).user._id; // Assuming user ID is stored in req.user
-            const lessons = await Lesson.find({ 
-                $or: [
-                    { teacherId: userId },
-                    { members: userId }
-                ],
-                status: 'scheduled'
-            })
-            .populate('groupId', 'name description type teacherId members meetingLink usualDate')
-            .populate('teacherId', 'name email')
-            .populate('members', 'name email');
-
-            res.status(200).json(lessons);
-        } catch (error) {
-            res.status(500).json({ message: 'Server error', error });   
-        }
-    }
-
     async getLessonById(req: Request, res: Response) {
         try {
             const lessonId = req.params.id;

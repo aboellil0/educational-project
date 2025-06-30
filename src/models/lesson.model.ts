@@ -12,7 +12,7 @@ export interface ILesson extends Document {
   homework?: {
     _id: ObjectId;
     title: string;
-    description: string;
+    description?: string;
   };
   createdAt: Date;
   updatedAt: Date
@@ -27,7 +27,7 @@ const lessonSchema = new Schema<ILesson>({
   homework: {
     _id: { type: Schema.Types.ObjectId, ref: 'Homework' },
     title: { type: String },
-    description: { type: String }
+    description: { type: String, required: false }
   },
   status: {
     type: String,

@@ -3,6 +3,7 @@ import Lesson,{ ILesson } from "../models/lesson.model";
 import Teacher,{ITeacher} from "../models/teacher.model";
 import LessonGroup,{ILessonGroup} from "../models/lessonGroup.model";
 import User from "../models/user.model";
+import LessonReport from "../models/lessonReport.model";
 
 
 export class TeacherController {
@@ -94,6 +95,66 @@ export class TeacherController {
             res.status(200).json({ message: "Teacher deleted successfully" });
         } catch (error) {
             res.status(500).json({ message: "Error deleting teacher", error });
+        }
+    }
+
+    async getTeacherLessons(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+
+        try {
+            const lessons: ILesson[] = await Lesson.find({ teacherId: id }).populate('groupId').populate('reportId');
+            if (!lessons || lessons.length === 0) {
+                res.status(404).json({ message: "No lessons found for this teacher" });
+                return;
+            }
+            res.status(200).json(lessons);
+        } catch (error) {
+            res.status(500).json({ message: "Error retrieving lessons", error });
+        }
+    }
+
+    async getMyLessons(req: Request, res: Response): Promise<void> {
+        const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
+        const teacherId = (await Teacher.findOne({ user: userId }))?._id;
+        try {
+            const lessons: ILesson[] = await Lesson.find({ teacherId }).populate('groupId').populate('reportId').populate('homework');
+            if (!lessons || lessons.length === 0) {
+                res.status(404).json({ message: "No lessons found for this teacher" });
+                return;
+            }
+            res.status(200).json(lessons);
+        } catch (error) {
+            res.status(500).json({ message: "Error retrieving lessons", error });
+        }
+    }
+
+    async getTeacherGroups(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+
+        try {
+            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId: id }).populate('teacherId').populate('students');
+            if (!groups || groups.length === 0) {
+                res.status(404).json({ message: "No groups found for this teacher" });
+                return;
+            }
+            res.status(200).json(groups);
+        } catch (error) {
+            res.status(500).json({ message: "Error retrieving groups", error });
+        }
+    }
+
+    async getMyGroups(req: Request, res: Response): Promise<void> {
+        const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
+        const teacherId = (await Teacher.findOne({ user: userId }))?._id;
+        try {
+            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId }).populate('teacherId').populate('students');
+            if (!groups || groups.length === 0) {
+                res.status(404).json({ message: "No groups found for this teacher" });
+                return;
+            }
+            res.status(200).json(groups);
+        } catch (error) {
+            res.status(500).json({ message: "Error retrieving groups", error });
         }
     }
 }
