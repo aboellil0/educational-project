@@ -1,22 +1,20 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { RequestHandler } from 'express';
 import * as authController from '../controllers/auth.controller';
 import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/logout', authController.logout);
-router.post('/refresh-token', authController.refreshToken);
-router.post('/verify-email', authController.verifyEmail);
-router.post('/forgot-password', authController.forgotPassword);
-router.post('/reset-password', authController.resetPassword);
-router.post('/google', authController.googleLogin);
+router.post('/register', authController.register as RequestHandler);
+router.post('/login', authController.login as RequestHandler);
+router.post('/logout', authController.logout as RequestHandler);
+router.post('/refresh-token', authController.refreshToken as RequestHandler);
+router.post('/verify-email', authController.verifyEmail as RequestHandler);
+router.post('/forgot-password', authController.forgotPassword as RequestHandler);
+router.post('/reset-password', authController.resetPassword as RequestHandler);
+router.post('/google', authController.googleLogin as RequestHandler);
 
 // Protected routes
-router.get('/profile', isAuthenticated, authController.getMe);
-router.post('/verify-phone/send', isAuthenticated, authController.sendPhoneVerification);
-router.post('/verify-phone', isAuthenticated, authController.verifyPhone);
+router.get('/profile', isAuthenticated as RequestHandler, authController.getMe);
 
 export default router;

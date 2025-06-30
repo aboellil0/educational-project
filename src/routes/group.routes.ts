@@ -1,29 +1,30 @@
 import express from 'express';
-import { GroupController } from '../controllers/groupController';
-import { auth, adminAuth, teacherAuth } from '../middleware/auth.middleware';
+import { GroupController } from '../controllers/group.controller';
+import { isAuthenticated, isAdmin, isTeacher, isAdminOrTeacher } from '../middleware/auth.middleware';
+import Teacher from '../models/teacher.model';
 
 const router = express.Router();
 const groupController = new GroupController();
 
-// Create a new group (admin/teacher only)
-router.post('/', teacherAuth, groupController.createGroup);
+// Create a new group (admin only)
+router.post('/', isAdmin as any, groupController.createGroup as any);
 
 // Get group by ID
-router.get('/:id', auth, groupController.getGroupById);
+router.get('/:id', isAuthenticated as any, groupController.getGroupById as any);
 
-// Get all groups
-router.get('/', auth, groupController.getAllGroups);
+// Get all groups (admin/teacher only)
+router.get('/', isAdminOrTeacher as any, groupController.getAllGroups as any);
 
-// Update group (admin/teacher only)
-router.put('/:id', teacherAuth, groupController.updateGroup);
+// Update group (admin only)
+router.put('/:id', isAdmin as any, groupController.updateGroup as any);
 
 // Delete group (admin only)
-router.delete('/:id', adminAuth, groupController.deleteGroup);
+router.delete('/:id', isAdmin as any, groupController.deleteGroup as any);
 
-// Add member to group (admin/teacher only)
-router.post('/:id/members', teacherAuth, groupController.addMemberToGroup);
+// Add member to group (admin only)
+router.post('/:id/members', isAdmin as any, groupController.addMemberToGroup as any);
 
-// Remove member from group (admin/teacher only)
-router.delete('/:id/members', teacherAuth, groupController.removeMemberFromGroup);
+// Remove member from group (admin only)
+router.delete('/:id/members', isAdmin as any, groupController.removeMemberFromGroup as any);
 
 export default router;

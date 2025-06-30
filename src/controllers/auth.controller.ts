@@ -16,7 +16,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, age, quranMemorized,numOfPartsofQuran,freeLessonUsed } = req.body;
+    const { name, email, password, phone, age, quranMemorized,numOfPartsofQuran } = req.body;
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -36,7 +36,8 @@ export const register = async (req: Request, res: Response) => {
       age,
       quranMemorized,
       numOfPartsofQuran,
-      freeLessonUsed,
+      role:'student',
+      freeLessonUsed: false,
       emailVerificationToken,
       emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
@@ -74,50 +75,47 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    
-    // Find user
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-    
-    // If user registered with social providers and has no password
-    if (!user.password) {
-      return res.status(401).json({ 
-        message: 'This account was created using a social provider. Please log in with that method.' 
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+          return res.status(400).json({ message: 'Email and password are required' });
+      }
+
+      const user = await User.findOne({ email });
+      
+      if (!user || !user.password) {
+          return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      
+      if (!isMatch) {
+          return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      // Generate tokens and continue with the rest of your existing login logic
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+      
+      res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
-    }
-    
-    // Compare password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-    
-    // Generate tokens
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    
-    // Set refresh token in HTTP-only cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-    
-    res.json({
-      message: 'Login successful',
-      accessToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      },
-    });
+      
+      res.json({
+          message: 'Login successful',
+          accessToken,
+          user: {
+              id: user._id,
+              name: user.name,
+              email: user.email
+          },
+      });
+
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+      console.error('Login error:', error);
+      res.status(500).json({ message: 'Server error during login' });
   }
 };
 

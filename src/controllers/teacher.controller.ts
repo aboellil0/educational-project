@@ -8,7 +8,7 @@ import LessonReport from "../models/lessonReport.model";
 
 export class TeacherController {
 
-    async getTeachers(req: Request, res: Response): Promise<void> {
+    async getTeachers(req: Request, res: Response){
         try {
             const teachers: ITeacher[] = await Teacher.find();
             res.status(200).json(teachers);
@@ -17,7 +17,7 @@ export class TeacherController {
         }
     }
 
-    async getTeacherById(req: Request, res: Response): Promise<void> {
+    async getTeacherById(req: Request, res: Response){
         const { id } = req.params;
         try {
             const teacher: ITeacher | null = await Teacher.findById(id);
@@ -31,7 +31,7 @@ export class TeacherController {
         }
     }
 
-    async createTeacher(req: Request, res: Response): Promise<void> {
+    async createTeacher(req: Request, res: Response){
         const { name, email, password, phone,specialization,meetingLink,availability } = req.body;
 
         try {
@@ -62,7 +62,7 @@ export class TeacherController {
         }
     }
 
-    async updateTeacher(req: Request, res: Response): Promise<void> {
+    async updateTeacher(req: Request, res: Response){
         const { id } = req.params;
         const { specialization, meetingLink, availability } = req.body;
 
@@ -82,7 +82,7 @@ export class TeacherController {
         }
     }
 
-    async deleteTeacher(req: Request, res: Response): Promise<void> {
+    async deleteTeacher(req: Request, res: Response){
         const { id } = req.params;
 
         try {
@@ -98,7 +98,7 @@ export class TeacherController {
         }
     }
 
-    async getTeacherLessons(req: Request, res: Response): Promise<void> {
+    async getTeacherLessons(req: Request, res: Response){
         const { id } = req.params;
 
         try {
@@ -113,7 +113,7 @@ export class TeacherController {
         }
     }
 
-    async getMyLessons(req: Request, res: Response): Promise<void> {
+    async getMyLessons(req: Request, res: Response) {
         const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
         const teacherId = (await Teacher.findOne({ user: userId }))?._id;
         try {
@@ -128,7 +128,7 @@ export class TeacherController {
         }
     }
 
-    async getTeacherGroups(req: Request, res: Response): Promise<void> {
+    async getTeacherGroups(req: Request, res: Response){
         const { id } = req.params;
 
         try {
@@ -143,7 +143,7 @@ export class TeacherController {
         }
     }
 
-    async getMyGroups(req: Request, res: Response): Promise<void> {
+    async getMyGroups(req: Request, res: Response){
         const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
         const teacherId = (await Teacher.findOne({ user: userId }))?._id;
         try {

@@ -70,10 +70,12 @@ userSchema.pre('save', async function (next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+    if (!candidatePassword || !this.password) {
+        return false;
+    }
     return bcrypt.compare(candidatePassword, this.password);
 };
-
 
 const User = model<IUser>('User', userSchema);
 export default User;

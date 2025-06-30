@@ -49,3 +49,9 @@ export const isTeacher =  (req: AuthRequest, res: Response, next: NextFunction) 
   next();
 };
 
+export const isAdminOrTeacher = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user?.role || (!req.user.role.includes('admin') && !req.user.role.includes('teacher'))) {
+    return res.status(403).json({ message: 'Access denied. Admin or Teacher role required' });
+  }
+  next();
+};

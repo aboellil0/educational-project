@@ -1,29 +1,29 @@
 import express from 'express';
-import { LessonController } from '../controllers/lessonController';
-import { auth, teacherAuth } from '../middleware/auth.middleware';
+import { LessonController } from '../controllers/lesson.controller';
+import { isAdminOrTeacher, isAuthenticated, isTeacher } from '../middleware/auth.middleware';
 
 const router = express.Router();
 const lessonController = new LessonController();
 
 // Get lesson by ID
-router.get('/:id', auth, lessonController.getLessonById);
+router.get('/:id', isAuthenticated as any, lessonController.getLessonById as any);
 
 // Get lessons by group ID
-router.get('/group/:id', auth, lessonController.getLessonsByGroup);
+router.get('/group/:id', isAuthenticated as any, lessonController.getLessonsByGroup as any);
 
-// Add lesson to group (teacher only)
-router.post('/group/:id', teacherAuth, lessonController.addlessonToGroup);
+// Add lesson to group (teacher/admin only)
+router.post('/group/:id', isAdminOrTeacher as any, lessonController.addlessonToGroup as any);
 
 // Add homework to lesson (teacher only)
-router.patch('/:id/homework', teacherAuth, lessonController.addHomewrok);
+router.patch('/:id/homework', isTeacher as any, lessonController.addHomewrok as any);
 
 // Get lesson homework
-router.get('/:id/homework', auth, lessonController.getLessonHomework);
+router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHomework as any);
 
-// Update lesson (teacher only)
-router.put('/:id', teacherAuth, lessonController.updateLesson);
+// Update lesson (teacher/admin only)
+router.put('/:id', isAdminOrTeacher as any, lessonController.updateLesson as any);
 
-// Delete lesson (teacher only)
-router.delete('/:id', teacherAuth, lessonController.deleteLesson);
+// Delete lesson (teacher/admin only)
+router.delete('/:id', isAdminOrTeacher as any, lessonController.deleteLesson as any);
 
 export default router;

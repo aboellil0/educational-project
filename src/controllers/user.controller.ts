@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import Lesson,{ILesson} from "../models/lesson.model";
 import LessonReport,{ILessonReport} from "../models/lessonReport.model";
+import LessonGroup from "../models/lessonGroup.model";
 // Custom error handler
 const handleError = (res: Response, error: any, message: string) => {
     console.error(`Error ${message}:`, error);
@@ -162,8 +163,9 @@ export const getMylessons = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "User not found" });
         }
         
+        const groupId = await LessonGroup.find({members:userId});
         // Assuming lessons are stored in a separate collection and linked to users
-        const lessons = await Lesson.find({ userId }).sort('-scheduledAt'); // Sort by scheduled date
+        const lessons = await Lesson.find({ groupId }).sort('-scheduledAt'); // Sort by scheduled date
         
         return res.status(200).json({
             success: true,
@@ -172,6 +174,33 @@ export const getMylessons = async (req: Request, res: Response) => {
         });
     } catch (error) {
         return handleError(res, error, "retrieving user lessons");
+    }
+}
+
+
+export const getMyReports = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+        
+        const reports = await LessonReport.find({ sudentId:userId })
+            .sort('-createdAt')
+            .populate('lessonId');
+        
+        return res.status(200).json({
+            success: true,
+            message: "User reports retrieved successfully",
+            data: reports,
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving user reports");
     }
 }
 
