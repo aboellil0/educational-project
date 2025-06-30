@@ -1,4 +1,3 @@
-import { required, string } from 'joi';
 import { Document, ObjectId } from 'mongoose';
 import { Schema, model } from 'mongoose';
 
@@ -19,10 +18,10 @@ export interface IContactInfo extends Document {
 
 const contactInfoSchema = new Schema<IContactInfo>({
     whatsappNumber: [{ type: String, required: true }],
-    phone: [{type:string,required:true}],
-    facebook: {type:string},
-    linkedin: {type:string},
-    address: {type:string},
+    phone: [{type:String,required:true}],
+    facebook: {type:String},
+    linkedin: {type:String},
+    address: {type:String},
     telegramLink: { type: String, default: '' },
     email: { type: String, default: '' },
     isActive: { type: Boolean, default: true },

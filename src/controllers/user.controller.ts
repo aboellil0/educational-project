@@ -163,7 +163,7 @@ export const getMylessons = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "User not found" });
         }
         
-        const groupId = await LessonGroup.find({members:userId});
+        const groupId = await LessonGroup.find({members:userId})
         // Assuming lessons are stored in a separate collection and linked to users
         const lessons = await Lesson.find({ groupId }).sort('-scheduledAt'); // Sort by scheduled date
         
