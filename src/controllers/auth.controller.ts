@@ -16,7 +16,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, quranMemorized,numOfPartsofQuran,freeLessonUsed } = req.body;
+    const { name, email, password, phone, age, quranMemorized,numOfPartsofQuran,freeLessonUsed } = req.body;
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -33,6 +33,7 @@ export const register = async (req: Request, res: Response) => {
       email,
       password,
       phone,
+      age,
       quranMemorized,
       numOfPartsofQuran,
       freeLessonUsed,

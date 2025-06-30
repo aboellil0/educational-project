@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import * as authController from '../controllers/auth.controller';
 import { isAuthenticated } from '../middleware/auth.middleware';
 

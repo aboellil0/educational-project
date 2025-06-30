@@ -49,7 +49,7 @@ export class AdminController {
     async updateMember(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { name, email, phone, quranMemorized, numOfPartsofQuran, isVerified } = req.body
+            const { name, email, phone,password,age,freeLessonUsed,PrivitelessonCredits,PubliclessonCredits, quranMemorized, numOfPartsofQuran, isVerified } = req.body
 
             // Validate required fields
             if (!name || !email || !phone) {
@@ -60,6 +60,11 @@ export class AdminController {
                 name,
                 email,
                 phone,
+                password,
+                age,
+                freeLessonUsed,
+                PrivitelessonCredits,
+                PubliclessonCredits,
                 quranMemorized: quranMemorized || '',
                 numOfPartsofQuran: numOfPartsofQuran || 0,
             });
@@ -76,6 +81,32 @@ export class AdminController {
             return res.status(200).json(updatedMember);
         } catch (error) {
             return res.status(500).json({ message: 'Error updating member', error });
+        }
+    }
+
+    async updateContactInfo(req: Request, res: Response) {
+        try {
+            const { email, phone, address, whatsapp,telegramLink, facebook, linkedin } = req.body;
+            
+            // Find the first contact info document or create if none exists
+            let contactInfo = await ContactInfo.findOne();
+            if (!contactInfo) {
+                contactInfo = new ContactInfo({});
+            }
+
+            // Update fields if provided
+            if (email) contactInfo.email = email;
+            if (phone) contactInfo.phone = phone;
+            if (address) contactInfo.address = address;
+            if (whatsapp) contactInfo.whatsappNumber = whatsapp;
+            if (facebook) contactInfo.facebook = facebook;
+            if (telegramLink) contactInfo.telegramLink = telegramLink;
+            if (linkedin) contactInfo.linkedin = linkedin;
+
+            await contactInfo.save();
+            return res.status(200).json(contactInfo);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error updating contact information', error });
         }
     }
 }
