@@ -13,7 +13,6 @@ router.post('/verify-email', authController.verifyEmail);
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
 router.post('/google', authController.googleLogin);
-router.post('/facebook', authController.facebookLogin);
 
 // Protected routes
 router.get('/profile', isAuthenticated, authController.getMe);
