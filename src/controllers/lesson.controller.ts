@@ -125,6 +125,28 @@ export class LessonController {
         }
     }
 
+    async getLessonHomework(req: Request, res: Response) {
+        try {
+            const lessonId = req.params.id;
+            if (!Types.ObjectId.isValid(lessonId)) {
+                return res.status(400).json({ message: 'Invalid lesson ID' });
+            }
+
+            const lesson = await Lesson.findById(lessonId)
+                .populate('groupId', 'name description type teacherId members meetingLink usualDate')
+                .populate('teacherId', 'name email')
+                .populate('members', 'name email');
+
+            if (!lesson) {
+                return res.status(404).json({ message: 'Lesson not found' });
+            }
+
+            res.status(200).json({ homework: lesson.homework });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error });
+        }
+    }
+
     async updateLesson(req: Request, res: Response) {
         try {
             const lessonId = req.params.id;

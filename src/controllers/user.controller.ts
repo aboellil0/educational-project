@@ -205,28 +205,6 @@ export const getMylessons = async (req: Request, res: Response) => {
     }
 }
 
-export const getMyhomework = async (req: Request, res: Response) => {
-    try {
-        const userId = (req as any).user._id;
-        const user = await User.findById(userId).select('-password'); // Exclude password
-        
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        
-        // Assuming homework is stored in a separate collection and linked to users
-        const homework = await Homework.find({ userId }).sort('-assignedAt'); // Sort by assigned date
-        
-        return res.status(200).json({
-            success: true,
-            message: "User homework retrieved successfully",
-            data: homework,
-        });
-    } catch (error) {
-        return handleError(res, error, "retrieving user homework");
-    }
-}
-
 export const updateCredits = async (req: Request, res: Response) => {
     try {
         const { privateAmount, publicAmount, userId } = req.body;
