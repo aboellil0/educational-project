@@ -76,37 +76,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         return handleError(res, error, "updating user profile");
     }
 };
-
-export const getStudentsForTeacher = async (req: Request, res: Response) => {
-    try {
-        const teacherId = (req as any).user._id;
-
-        const teacher = await User.findById(teacherId);
-        if (!teacher || teacher.role !== 'teacher') {
-            return res.status(403).json({ 
-                success: false,
-                message: "Access denied. User is not a teacher" 
-            });
-        }
-
-        // Find all students for this teacher
-        const students = await User.find({ role: 'student', teacherId })
-            .select('-password')
-            .sort('-createdAt'); // Optional: sort by creation date
-
-        return res.status(200).json({
-            success: true,
-            message: "Students retrieved successfully",
-            data: {
-                students,
-                total: students.length
-            }
-        });
-    } catch (error) {
-        return handleError(res, error, "retrieving students");
-    }
-}
-
+    
 export const verifyUser = async (req: Request, res: Response) => {
     try {
         const { userId } = req.body;
