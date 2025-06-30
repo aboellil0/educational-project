@@ -14,4 +14,20 @@ const router = express.Router();
 router.get('/my-lessons', isAuthenticated as any, teacherController.getMyLessons as any);
 
 
+// Create Teacher (admin)
+router.post('/', isAdmin as any, teacherController.createTeacher as any);
+
+// Get all teachers
+router.get('/', isAuthenticated as any, teacherController.getTeachers as any);
+
+// Get teacher by ID
+router.get('/:id', isAuthenticated as any, teacherController.getTeacherById as any);
+
+// Update teacher (admin/teacher)
+router.put('/:id', isAdminOrTeacher as any, teacherController.updateTeacher as any);
+
+// Delete teacher (admin)
+router.delete('/:id', isAdmin as any, teacherController.deleteTeacher as any);
+
+
 export default router;
