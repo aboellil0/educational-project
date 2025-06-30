@@ -11,7 +11,7 @@ export interface IUser extends Document {
     phone: string;
     role: 'admin' | 'teacher' | 'student' ;
     age?: number;
-    quranMemorized: string;
+    quranMemorized?: string;
     numOfPartsofQuran: number;
     isVerified: boolean;
     freeLessonUsed: boolean;
