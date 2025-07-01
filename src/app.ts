@@ -12,7 +12,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import adminRoutes from './routes/admin.routes';
-import groupRputes from './routes/group.routes';
+import groupRoutes from './routes/group.routes';
 import lessonRoutes from './routes/lesson.routes';
 import reportRoutes from './routes/report.routes';
 import teacherRoutes from './routes/teacher.routes';
@@ -47,11 +47,12 @@ const server = async (): Promise<void> => {
 
   // Routes
   app.use('/api/auth', authRoutes);
+  app.use('/api/teacher',teacherRoutes);
   app.use('/api/user', userRoutes);
-  app.use('/api/admin',adminRouter);
-  app.use('api/group', groupRputes);
-  app.use('api/lesson', lessonRoutes);
-  app.use('api/report',reportRoutes);
+  app.use('/api/admin',adminRoutes);
+  app.use('/api/group', groupRoutes);
+  app.use('/api/lesson', lessonRoutes);
+  app.use('/api/report',reportRoutes);
 
 
   // Error handler middleware

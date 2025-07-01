@@ -48,13 +48,13 @@ export class TeacherController {
                 PrivitelessonCredits: 0,
                 PubliclessonCredits: 0,
             });
+            await newUser.save();
             const newTeacher = new Teacher({
-                user: newUser._id,
+                userId: newUser._id,
                 specialization,
                 meetingLink,
                 availability
             });
-            await newUser.save();
             await newTeacher.save();
             res.status(201).json(newTeacher);
         } catch (error) {

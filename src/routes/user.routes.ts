@@ -26,7 +26,7 @@ router.patch('/verify', isAuthenticated as any,isAdmin as any, verifyUser as any
 router.delete('/profile', isAuthenticated as any, deleteUser as any);
 
 // Get all users (admin only)
-router.get('/all', isAdmin as any, getAllUsers as any);
+router.get('/all',  isAuthenticated  as any,isAdmin as any, getAllUsers as any);
 
 // Get current user's lessons
 router.get('/my-lessons', isAuthenticated  as any, getMylessons as any);

@@ -109,4 +109,28 @@ export class AdminController {
             return res.status(500).json({ message: 'Error updating contact information', error });
         }
     }
+
+    async createAdmin(req: Request, res: Response) {
+        try {
+            const { name, email, password, phone } = req.body;
+
+            if (!name || !email || !password || !phone) {
+                return res.status(400).json({ message: 'Name, email, password, and phone are required' });
+            }
+
+            const newAdmin = new User({
+                name,
+                email,
+                password,
+                phone,
+                role: 'admin',
+                isVerified: true,
+            });
+
+            await newAdmin.save();
+            return res.status(201).json(newAdmin);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error creating admin', error });
+        }
+    }
 }

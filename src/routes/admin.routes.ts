@@ -44,4 +44,7 @@ router.get('/all', isAuthenticated as any,isAdmin as any, getAllUsers as any);
 // Update user credits (admin only)
 router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as any);
 
+// create admin
+router.post('/',isAuthenticated as any,isAdmin as any,adminController.createAdmin as any)
+
 export default router;

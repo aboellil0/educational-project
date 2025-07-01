@@ -3,6 +3,7 @@ import { Types, Schema } from 'mongoose';
 import LessonGroup from '../models/lessonGroup.model';
 import User from '../models/user.model';
 import Lesson from '../models/lesson.model';
+import Teacher from '../models/teacher.model';
 
 export class GroupController {
 
@@ -16,8 +17,8 @@ export class GroupController {
             }
 
             // Check if teacher exists
-            const teacher = await User.findById(teacherId);
-            if (!teacher || teacher.role !== 'teacher') {
+            const teacher = await Teacher.findById(teacherId);
+            if (!teacher) {
                 return res.status(404).json({ message: 'Teacher not found or not a valid teacher' });
             }
 
