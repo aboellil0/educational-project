@@ -92,7 +92,7 @@ api.interceptors.response.use(
       try {
         // Make sure we're using the right endpoint for refresh
         const { data } = await axios.post<RefreshTokenResponse>(
-          `${API_BASE_URL}/refresh-token`, 
+          `${API_BASE_URL}/api/auth/refresh-token`, 
           {}, 
           { withCredentials: true }
         );
