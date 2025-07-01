@@ -20,7 +20,7 @@ router.get('/profile', isAuthenticated as any, getUserProfile as any);
 router.put('/profile', isAuthenticated as any, updateUserProfile as any);
 
 // Verify a user (admin only)
-router.patch('/verify', isAdmin as any, verifyUser as any);
+router.patch('/verify', isAuthenticated as any,isAdmin as any, verifyUser as any);
 
 // Delete current user account
 router.delete('/profile', isAuthenticated as any, deleteUser as any);
@@ -35,7 +35,7 @@ router.get('/my-lessons', isAuthenticated  as any, getMylessons as any);
 router.get('/my-lessons', isAuthenticated  as any, getMyReports as any);
 
 // Update user credits (admin only)
-router.patch('/credits', isAdmin as any, updateCredits as any);
+router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as any);
 
 
 export default router;

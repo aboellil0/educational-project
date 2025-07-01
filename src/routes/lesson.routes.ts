@@ -12,18 +12,18 @@ router.get('/:id', isAuthenticated as any, lessonController.getLessonById as any
 router.get('/group/:id', isAuthenticated as any, lessonController.getLessonsByGroup as any);
 
 // Add lesson to group (teacher/admin only)
-router.post('/group/:id', isAdminOrTeacher as any, lessonController.addlessonToGroup as any);
+router.post('/group/:id', isAuthenticated as any,isAdminOrTeacher as any, lessonController.addlessonToGroup as any);
 
 // Add homework to lesson (teacher only)
-router.patch('/:id/homework', isTeacher as any, lessonController.addHomewrok as any);
+router.patch('/:id/homework', isAuthenticated as any,isTeacher as any, lessonController.addHomewrok as any);
 
 // Get lesson homework
 router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHomework as any);
 
 // Update lesson (teacher/admin only)
-router.put('/:id', isAdminOrTeacher as any, lessonController.updateLesson as any);
+router.put('/:id', isAuthenticated as any,isAdminOrTeacher as any, lessonController.updateLesson as any);
 
 // Delete lesson (teacher/admin only)
-router.delete('/:id', isAdminOrTeacher as any, lessonController.deleteLesson as any);
+router.delete('/:id', isAuthenticated as any,isAdminOrTeacher as any, lessonController.deleteLesson as any);
 
 export default router;

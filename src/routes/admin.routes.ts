@@ -15,33 +15,33 @@ const router = express.Router();
 const adminController = new AdminController();
 
 // Get all lesson reports
-router.get('/reports',isAdmin as any, adminController.getAllLessonReports as any);
+router.get('/reports',isAuthenticated as any,isAdmin as any, adminController.getAllLessonReports as any);
 
 // Add a new member
-router.post('/members', isAdmin as any, adminController.addMember as any);
+router.post('/members', isAuthenticated as any,isAdmin as any, adminController.addMember as any);
 
 // Update member
-router.put('/members/:id', isAdmin as any, adminController.updateMember as any);
+router.put('/members/:id', isAuthenticated as any,isAdmin as any, adminController.updateMember as any);
 
 // Update contact information
-router.put('/contact', isAdmin as any, adminController.updateContactInfo as any);
+router.put('/contact', isAuthenticated as any,isAdmin as any, adminController.updateContactInfo as any);
 
 // Get user profile
-router.get('/profile', isAdminOrTeacher as any, getUserProfile as any);
+router.get('/profile', isAuthenticated as any,isAdminOrTeacher as any, getUserProfile as any);
 
 // Update user profile
-router.put('/profile', isAdmin as any, updateUserProfile as any);
+router.put('/profile', isAuthenticated as any,isAdmin as any, updateUserProfile as any);
 
 // Verify a user (admin only)
-router.patch('/verify', isAdmin as any, verifyUser as any);
+router.patch('/verify', isAuthenticated as any,isAdmin as any, verifyUser as any);
 
 // Delete user account
-router.delete('/profile', isAdmin as any, deleteUser as any);
+router.delete('/profile', isAuthenticated as any,isAdmin as any, deleteUser as any);
 
 // Get all users (admin only)
-router.get('/all', isAdmin as any, getAllUsers as any);
+router.get('/all', isAuthenticated as any,isAdmin as any, getAllUsers as any);
 
 // Update user credits (admin only)
-router.patch('/credits', isAdmin as any, updateCredits as any);
+router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as any);
 
 export default router;
