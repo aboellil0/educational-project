@@ -12,6 +12,7 @@ const handleError = (res: Response, error: any, message: string) => {
 export const getUserProfile = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
+        const userRole = (req as any).role;
         const user = await User.findById(userId).select('-password'); // Exclude password
         
         if (!user) {
@@ -22,6 +23,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
             success: true,
             message: "User profile retrieved successfully",
             data: user,
+            userRole: userRole
         });
     } catch (error) {
         return handleError(res, error, "retrieving user profile");
@@ -207,6 +209,7 @@ export const getMyReports = async (req: Request, res: Response) => {
 export const updateCredits = async (req: Request, res: Response) => {
     try {
         const { privateAmount, publicAmount, userId } = req.body;
+
 
         // Input validation
         if (!userId) {
