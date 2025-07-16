@@ -332,6 +332,24 @@
               }
             }
           }
+        },
+        {
+          "name": "Get My Group",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/user/my-group",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "my-group"]
+            }
+          }
         }
       ]
     },
