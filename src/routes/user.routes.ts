@@ -7,7 +7,8 @@ import {
     getAllUsers, 
     getMylessons, 
     updateCredits, 
-    getMyReports
+    getMyReports,
+    getMyGroup
 } from '../controllers/user.controller';
 import { isAuthenticated, isAdmin } from '../middleware/auth.middleware';
 
@@ -37,5 +38,7 @@ router.get('/my-lessons', isAuthenticated  as any, getMyReports as any);
 // Update user credits (admin only)
 router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as any);
 
+// Get current user's group
+router.get('/my-group', isAuthenticated as any, getMyGroup as any);
 
 export default router;

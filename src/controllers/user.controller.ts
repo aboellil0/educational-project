@@ -206,6 +206,40 @@ export const getMyReports = async (req: Request, res: Response) => {
     }
 }
 
+export const getMyGroup = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+        
+        const group = await LessonGroup.findOne({ members: userId })
+            .populate('teacherId', 'name email')
+            .populate('members', 'name email')
+            .populate('lessons');
+        
+        if (!group) {
+            return res.status(404).json({
+                success: false,
+                message: "Group not found"
+            });
+        }
+        
+        return res.status(200).json({
+            success: true,
+            message: "User group retrieved successfully",
+            data: group,
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving user group");
+    }
+}
+
 export const updateCredits = async (req: Request, res: Response) => {
     try {
         const { privateAmount, publicAmount, userId } = req.body;
