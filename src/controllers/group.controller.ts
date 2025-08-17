@@ -89,6 +89,7 @@ export class GroupController {
             }
 
             const deletedGroup = await LessonGroup.findByIdAndDelete(groupId);
+            const deletedLessons = await Lesson.deleteMany({ groupId });
 
             if (!deletedGroup) {
                 return res.status(404).json({ message: 'Group not found' });
