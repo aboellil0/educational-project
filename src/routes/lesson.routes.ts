@@ -26,4 +26,10 @@ router.put('/:id', isAuthenticated as any,isAdminOrTeacher as any, lessonControl
 // Delete lesson (teacher/admin only)
 router.delete('/:id', isAuthenticated as any,isAdminOrTeacher as any, lessonController.deleteLesson as any);
 
+// completeLesson
+router.post('/:id/complete', isAuthenticated as any, lessonController.completeLesson as any);
+
+// update status of lesson
+router.patch('/:id/status', isAuthenticated as any, lessonController.updateLessonStatus as any);
+
 export default router;
