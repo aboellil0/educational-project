@@ -417,3 +417,4 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
         return handleError(res, error, "retrieving next lesson");
     }
 }
+

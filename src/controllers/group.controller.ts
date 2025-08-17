@@ -171,7 +171,7 @@ export class GroupController {
                 return res.status(400).json({ message: 'Member does not exist in the group' });
             }
 
-            group.members = group.members.filter(member => member !== memberId);
+            group.members = group.members.filter(member => member.toString() !== memberId.toString());
             await group.save();
 
             res.status(200).json(group);

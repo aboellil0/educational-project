@@ -156,4 +156,13 @@ export class AdminController {
             return res.status(500).json({ message: 'Error updating lessons', error });
         }
     }
+
+    async getAllStudents(req: Request, res: Response) {
+        try {
+            const students = await User.find({ role: 'student' }).select('-password');
+            return res.status(200).json(students);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error fetching students', error });
+        }
+    }
 }

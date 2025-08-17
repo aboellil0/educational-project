@@ -50,4 +50,7 @@ router.post('/',isAuthenticated as any,isAdmin as any,adminController.createAdmi
 // add numberOflessonsCridets for teacher
 router.post('/addNumberOfLessonsCredits', isAuthenticated as any,isAdmin as any, adminController.addNumberOfLessonsCredits as any);
 
+// get all students
+router.get('/students', isAuthenticated as any,isAdmin as any, adminController.getAllStudents as any);
+
 export default router;
