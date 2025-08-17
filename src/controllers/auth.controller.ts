@@ -16,7 +16,7 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, age, quranMemorized,numOfPartsofQuran } = req.body;
+    const { name, email, password, phone, age, quranMemorized, numOfPartsofQuran, country, city } = req.body;
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -25,7 +25,7 @@ export const register = async (req: Request, res: Response) => {
     }
     
     // Create verification token
-    const emailVerificationToken = generateVerificationToken();
+    // const emailVerificationToken = generateVerificationToken();
     
     // Create new user
     const user = new User({
@@ -36,16 +36,18 @@ export const register = async (req: Request, res: Response) => {
       age,
       quranMemorized,
       numOfPartsofQuran,
-      role:'student',
+      country,
+      city,
+      role: 'student',
       freeLessonUsed: false,
-      emailVerificationToken,
+      // emailVerificationToken,
       emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     });
     
     await user.save();
     
     // Send verification email
-    await sendVerificationEmail(email, emailVerificationToken);
+    // await sendVerificationEmail(email, emailVerificationToken);
     
     // Generate tokens
     const accessToken = generateAccessToken(user);

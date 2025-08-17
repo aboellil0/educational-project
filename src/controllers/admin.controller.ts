@@ -133,4 +133,27 @@ export class AdminController {
             return res.status(500).json({ message: 'Error creating admin', error });
         }
     }
+
+    // the teacher had number of lesson should make 
+    async AddLessonsForTeacher(req: Request, res: Response) {
+        try {
+            const { teacherId, NOLessonCridets } = req.body;
+
+            if (!teacherId || !NOLessonCridets) {
+                return res.status(400).json({ message: 'Teacher ID and number of lesson credits are required' });
+            }
+
+            const teacher = await Teacher.findById(teacherId);
+            if (!teacher) {
+                return res.status(404).json({ message: 'Teacher not found' });
+            }
+            
+            teacher.numberOflessonsCridets = (teacher.numberOflessonsCridets || 0) + NOLessonCridets;
+            await teacher.save();
+            return res.status(200).json({ message: 'Lessons updated successfully', teacher });
+
+        } catch (error) {
+            return res.status(500).json({ message: 'Error updating lessons', error });
+        }
+    }
 }

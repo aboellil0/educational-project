@@ -11,6 +11,8 @@ export interface IUser extends Document {
     phone: string;
     role: 'admin' | 'teacher' | 'student' ;
     age?: number;
+    country?: string;
+    city?: string;
     quranMemorized?: string;
     numOfPartsofQuran: number;
     isVerified: boolean;
@@ -37,6 +39,8 @@ const userSchema = new Schema<IUser>({
     phone: { type: String, required: true },
     role: { type: String, enum: ['admin', 'teacher', 'student'], default: 'student' },
     age: { type: Number, min: 0 },
+    country: { type: String, default: '' },
+    city: { type: String, default: '' },
     quranMemorized: { type: String, default: '' },
     numOfPartsofQuran: { type: Number, default: 0 },
     isVerified: { type: Boolean, default: false },

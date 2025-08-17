@@ -53,6 +53,7 @@ export class TeacherController {
                 userId: newUser._id,
                 specialization,
                 meetingLink,
+                numberOflessons: 0, 
                 availability
             });
             await newTeacher.save();

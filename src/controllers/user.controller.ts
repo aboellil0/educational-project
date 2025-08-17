@@ -298,3 +298,122 @@ export const updateCredits = async (req: Request, res: Response) => {
         return handleError(res, error, "updating credits");
     }
 }
+
+
+
+
+// => في داش بورد الطالب عايزين الحلقات المستحقة خلال الشهر و الحلقات المتبقية و الحلقات المكتملة و مرات الحضور مرات الغياب
+
+export const getUserStats = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+
+        // completed lessons inside the group that student is part of
+        const userGroup = await LessonGroup.findOne({ members: userId });
+        if (!userGroup) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User group not found" 
+            });
+        }
+        const lessons = await Lesson.find({ groupId: userGroup._id });
+        const completedLessons = lessons.filter(lesson => lesson.status === 'completed').length;
+
+
+        // get how many attended lessons from the reports
+        const reports = await LessonReport.find({ sudentId: userId });
+        const attendedLessons = reports.filter(report => report.attended === true).length;
+        const missedLessons = reports.filter(report => report.attended === false).length;
+
+
+        return res.status(200).json({
+            success: true,
+            message: "User stats retrieved successfully",
+            data: {
+                completedLessons,
+                attendedLessons,
+                missedLessons,
+                GroupName: userGroup.name,
+                GroupMeetingLink: userGroup.meetingLink,
+                GroupUsualDate: userGroup.usualDate,
+                typeOfGroup: userGroup.type,
+                PrivitelessonCredits: user.PrivitelessonCredits,
+                PubliclessonCredits: user.PubliclessonCredits,
+            },
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving user stats");
+    }
+}
+
+
+// =>  مطلوب الحصة القادمة  مراجعة و جديد نوعهarray
+
+export const wantedForNextLesson = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+
+
+        // Find the last report of the last completed session
+        const lessonGroup = await LessonGroup.findOne({ members: userId });
+        if (!lessonGroup) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Lesson group not found" 
+            });
+        }
+        const lastSession = await Lesson.findOne({ groupId: lessonGroup._id, status: 'completed' }).sort({ date: -1 });
+
+        if (!lastSession) {
+            return res.status(404).json({ 
+                success: false,
+                message: "No completed sessions found" 
+            });
+        }
+
+        const lastReport = await LessonReport.findOne({ lessonId: lastSession._id, sudentId : userId }).sort({ createdAt: -1 });
+        
+        if (!lastReport) {
+            return res.status(404).json({ 
+                success: false,
+                message: "No report found for the last session" 
+            });
+        }
+
+        const nextLesson = await Lesson.findOne({ groupId: lessonGroup._id, status: 'scheduled' }).sort({ date: 1 });
+        if (!nextLesson) {
+            return res.status(404).json({ 
+                success: false,
+                message: "No upcoming lessons found" 
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Upcoming lesson retrieved successfully",
+            nextLesson: nextLesson, 
+            lastSession: lastSession,
+            lastReport: lastReport,
+            wantedForNextLesson: lastReport.wantedForNextLesson 
+
+        });
+    } catch (error) {
+        return handleError(res, error, "retrieving next lesson");
+    }
+}
