@@ -350,6 +350,42 @@
               "path": ["api", "user", "my-group"]
             }
           }
+        },
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/user/user-stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "user-stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Next Lesson Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/user/next-lesson",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "next-lesson"]
+            }
+          }
         }
       ]
     },
@@ -697,6 +733,63 @@
                   "value": ""
                 }
               ]
+            }
+          }
+        },
+        {
+          "name": "Complete Lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lesson/:id/complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lesson", ":id", "complete"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Lesson Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/lesson/:id/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "lesson", ":id", "status"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"scheduled\",\n  \"newdate\": \"2025-07-09T12:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         }
@@ -1270,6 +1363,218 @@
                   "language": "json"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Add Number of Lessons Credits",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/addNumberOfLessonsCredits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "addNumberOfLessonsCredits"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"string\",\n  \"NOLessonCridets\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Course Management",
+      "item": [
+        {
+          "name": "Get Active Courses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/course/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Course by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/course/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/course",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course"]
+            }
+          }
+        },
+        {
+          "name": "Register for Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/course/:courseId/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", ":courseId", "register"],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"string\",\n  \"email\": \"string\",\n  \"phone\": \"string\",\n  \"age\": 0,\n  \"country\": \"string\",\n  \"city\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/course",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\",\n  \"linkId\": \"string\",\n  \"telegramLink\": \"string\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Course",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/course/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"string\",\n  \"description\": \"string\",\n  \"linkId\": \"string\",\n  \"telegramLink\": \"string\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/course/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Registrations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/course/:courseId/registrations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "course", ":courseId", "registrations"],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": ""
+                }
+              ]
             }
           }
         }
