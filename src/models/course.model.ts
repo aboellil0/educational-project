@@ -1,15 +1,21 @@
 import { ObjectId } from 'mongodb';
 import { Schema, model } from 'mongoose';
 
-interface ICourse {
+export interface ICourse extends Document {
     _id: ObjectId;
     title: string;
     linkId: string; 
     description: string;
     telegramLink: string;
     registrations: {
-      userId: ObjectId;
-      registeredAt: Date;
+        userId?: ObjectId; 
+        userName: string;
+        email: string;
+        phone: string;
+        age: number;
+        country: string;
+        city: string;
+        registeredAt: Date;
     }[];
     isActive: boolean;
     createdAt: Date;
@@ -23,7 +29,13 @@ const courseSchema = new Schema<ICourse>({
     description: { type: String, required: true },
     telegramLink: { type: String, required: true },
     registrations: [{
-        userId: { type: ObjectId, ref: 'User', required: true },
+        userId: { type: Schema.Types.ObjectId, ref: 'User' }, 
+        userName: { type: String, required: true },
+        email: { type: String, required: true },
+        phone: { type: String, required: true },
+        age: { type: Number, required: true, min: 0 },
+        country: { type: String, required: true },
+        city: { type: String, required: true },
         registeredAt: { type: Date, default: Date.now }
     }],
     isActive: { type: Boolean, default: true }
@@ -32,4 +44,4 @@ const courseSchema = new Schema<ICourse>({
 });
 
 const Course = model<ICourse>('Course', courseSchema);
-export { ICourse, Course };
+export default Course;
