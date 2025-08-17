@@ -59,7 +59,10 @@ export class GroupController {
                 return res.status(404).json({ message: 'Group not found' });
             }
 
-            res.status(200).json(group);
+            const userid = await Teacher.findById(group.teacherId);
+            const teacherName = await User.findById(userid?._id).select('name');
+
+            res.status(200).json({ group, teacherName });
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
