@@ -410,8 +410,8 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
             nextLesson: nextLesson, 
             lastSession: lastSession,
             lastReport: lastReport,
-            wantedForNextLesson: lastReport.wantedForNextLesson 
-
+            wantedForNextLesson: lastReport.wantedForNextLesson,
+            newMemorized: lastReport.newMemorized,
         });
     } catch (error) {
         return handleError(res, error, "retrieving next lesson");

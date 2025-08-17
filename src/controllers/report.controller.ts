@@ -5,13 +5,23 @@ import User from "../models/user.model";
 import Teacher from "../models/teacher.model";
 import { Types } from "mongoose";
 
+interface wantedForNextLesson {
+    new: string[]; 
+    old: string[]; 
+} 
+
+interface newMemorized {
+    new: string[]; 
+    old: string[]; 
+}
+
 
 export class ReportController {
 
     async createReport(req: Request, res: Response) {
         try {
             const { lessonId } = req.params;
-            const { studentId, attended, content, newMemorized, notes, rating } = req.body;
+            const { studentId, attended, content, newMemorized, wantedForNextLesson, notes, rating } = req.body;
 
             // Validate lessonId and studentId
             if (!lessonId || !studentId) {
@@ -36,7 +46,14 @@ export class ReportController {
                 sudentId: student._id,
                 attended,
                 content,
-                newMemorized,
+                newMemorized : {
+                    new: newMemorized.new,
+                    old: newMemorized.old
+                },
+                wantedForNextLesson: {
+                    new: wantedForNextLesson.new,
+                    old: wantedForNextLesson.old
+                },
                 notes,
                 rating
             });
@@ -97,11 +114,11 @@ export class ReportController {
                 return res.status(400).json({ message: 'Invalid report ID' });
             }
 
-            const { attended, content, newMemorized, notes, rating, doneHomework } = req.body;
+            const { attended, content, newMemorized, wantedForNextLesson, notes, rating, doneHomework } = req.body;
 
             const updatedReport = await LessonReport.findByIdAndUpdate(
                 reportId,
-                { attended, content, newMemorized, notes, rating, doneHomework },
+                { attended, content, newMemorized: { new: newMemorized.new, old: newMemorized.old }, wantedForNextLesson: { new: wantedForNextLesson.new, old: wantedForNextLesson.old }, notes, rating, doneHomework },
                 { new: true }
             ).populate('studentId', 'name email').populate('teacherId', 'name email');
 

@@ -13,10 +13,16 @@ export interface ILessonReport extends Document {
     sudentId: ObjectId; 
     attended: boolean; // Indicates if the student attended the lesson
     content: string; // Text content of the report
-    newMemorized: string; // e.g., "Surah Al-Ikhlas"
+    newMemorized: {
+        new: string[]; 
+        old: string[]; 
+    }; // e.g., "Surah Al-Ikhlas"
     notes?: string; // Additional notes
     rating?: number; // Rating out of 5
-    wantedForNextLesson?: string; // e.g., "Surah Al-Mulk"
+    wantedForNextLesson: {
+        new: string[]; 
+        old: string[]; 
+    }; 
     doneHomework?: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -27,8 +33,14 @@ const lessonReportSchema = new Schema<ILessonReport>({
     sudentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     attended: { type: Boolean, default: false }, // Indicates if the student attended the lesson
     content: { type: String, required: true },
-    newMemorized: { type: String, required: true }, // e.g., "Surah Al-Ikhlas"
-    wantedForNextLesson: { type: String, required: false }, // e.g., "Surah Al-Mulk"
+    newMemorized: {
+        new: [{ type: String }],
+        old: [{ type: String }]
+    },
+    wantedForNextLesson: {
+        new: [{ type: String }],
+        old: [{ type: String }]
+    },
     doneHomework: { type: Boolean, default: false }, // Indicates if the student completed the homework
     notes: { type: String, required: false },
     rating: { type: Number, min: 1, max: 5, required: false },
