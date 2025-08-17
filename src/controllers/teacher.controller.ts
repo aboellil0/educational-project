@@ -11,7 +11,8 @@ export class TeacherController {
     async getTeachers(req: Request, res: Response){
         try {
             const teachers: ITeacher[] = await Teacher.find();
-            res.status(200).json(teachers);
+            const userTeahcer = await User.find({ role: 'teacher' }).select('-password');
+            res.status(200).json({ teachers, userTeahcer });
         } catch (error) {
             res.status(500).json({ message: "Error retrieving teachers", error });
         }
