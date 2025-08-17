@@ -47,4 +47,7 @@ router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as
 // create admin
 router.post('/',isAuthenticated as any,isAdmin as any,adminController.createAdmin as any)
 
+// add numberOflessonsCridets for teacher
+router.post('/addNumberOfLessonsCredits', isAuthenticated as any,isAdmin as any, adminController.addNumberOfLessonsCredits as any);
+
 export default router;

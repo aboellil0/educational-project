@@ -135,7 +135,7 @@ export class AdminController {
     }
 
     // the teacher had number of lesson should make 
-    async AddLessonsForTeacher(req: Request, res: Response) {
+    async addNumberOfLessonsCredits(req: Request, res: Response) {
         try {
             const { teacherId, NOLessonCridets } = req.body;
 
