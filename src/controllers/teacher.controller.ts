@@ -117,7 +117,12 @@ export class TeacherController {
 
     async getMyLessons(req: Request, res: Response) {
         const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
-        const teacherId = (await Teacher.findOne({ user: userId }))?._id;
+        const teacher = await Teacher.findOne({ userId: userId });
+        if (!teacher) {
+            res.status(404).json({ message: "Teacher profile not found" });
+            return;
+        }
+        const teacherId = teacher._id;
         try {
             const lessons: ILesson[] = await Lesson.find({ teacherId }).populate('groupId').populate('reportId').populate('homework');
             if (!lessons || lessons.length === 0) {
@@ -147,7 +152,12 @@ export class TeacherController {
 
     async getMyGroups(req: Request, res: Response){
         const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
-        const teacherId = (await Teacher.findOne({ user: userId }))?._id;
+        const teacher = await Teacher.findOne({ userId: userId });
+        if (!teacher) {
+            res.status(404).json({ message: "Teacher profile not found" });
+            return;
+        }
+        const teacherId = teacher._id;
         try {
             const groups: ILessonGroup[] = await LessonGroup.find({ teacherId }).populate('teacherId').populate('students');
             if (!groups || groups.length === 0) {
