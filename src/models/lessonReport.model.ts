@@ -12,6 +12,7 @@ export interface ILessonReport extends Document {
     lessonId: ObjectId; 
     sudentId: ObjectId; 
     attended: boolean; // Indicates if the student attended the lesson
+    completeLesson?: boolean; // Indicates if the lesson was completed
     content: string; // Text content of the report
     newMemorized: {
         new: string[]; 
@@ -33,6 +34,7 @@ const lessonReportSchema = new Schema<ILessonReport>({
     sudentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     attended: { type: Boolean, default: false }, // Indicates if the student attended the lesson
     content: { type: String, required: true },
+    completeLesson: { type: Boolean, default: false },
     newMemorized: {
         new: [{ type: String }],
         old: [{ type: String }]

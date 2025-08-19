@@ -205,7 +205,19 @@ export class LessonController {
                 
                 await Promise.all(group.members.map(async (memberId) => {
                     const member = await User.findById(memberId);
+                    const report = await LessonReport.findOne({ sudentId: memberId, lessonId: updatedLesson._id});
                     if (member && member.role === 'student') {
+                        if (report) {
+                            report.attended = true;
+                            await report.save();
+                        } else {
+                            const newReport = new LessonReport({
+                                sudentId: memberId,
+                                lessonId: updatedLesson._id,
+                                attended: true
+                            });
+                            await newReport.save();
+                        }
                         if (group.type === 'private') {
                             member.PrivitelessonCredits -= 1;
                             await member.save();

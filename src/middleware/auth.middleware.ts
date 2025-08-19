@@ -55,3 +55,26 @@ export const isAdminOrTeacher = (req: AuthRequest, res: Response, next: NextFunc
   }
   next();
 };
+
+
+// middleware to check if a student has PrivateCredits and PublicCredits
+
+export const hasPriviteCredits = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+  if (req.user.PrivitelessonCredits <= 0) {
+    return res.status(403).json({ message: 'Insufficient private credits' });
+  }
+  next();
+};
+
+export const hasPublicCredits = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+  if (req.user.PubliclessonCredits <= 0) {
+    return res.status(403).json({ message: 'Insufficient public credits' });
+  }
+  next();
+};

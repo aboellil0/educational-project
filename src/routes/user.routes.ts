@@ -35,7 +35,7 @@ router.get('/all',  isAuthenticated  as any,isAdmin as any, getAllUsers as any);
 router.get('/my-lessons', isAuthenticated  as any, getMylessons as any);
 
 // Get my Reports
-router.get('/my-lessons', isAuthenticated  as any, getMyReports as any);
+router.get('/my-reports', isAuthenticated  as any, getMyReports as any);
 
 // Update user credits (admin only)
 router.patch('/credits', isAuthenticated as any,isAdmin as any, updateCredits as any);

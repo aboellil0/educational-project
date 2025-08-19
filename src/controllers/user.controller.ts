@@ -324,15 +324,13 @@ export const getUserStats = async (req: Request, res: Response) => {
                 message: "User group not found" 
             });
         }
-        const lessons = await Lesson.find({ groupId: userGroup._id });
-        const completedLessons = lessons.filter(lesson => lesson.status === 'completed').length;
-
 
         // get how many attended lessons from the reports
-        const reports = await LessonReport.find({ sudentId: userId });
+        // get the reports for the lessons in the group that the student is part of now
+        const reports = await LessonReport.find({ sudentId: userId, lessonId: { $in: userGroup.lessons } }).populate('lessonId');
         const attendedLessons = reports.filter(report => report.attended === true).length;
         const missedLessons = reports.filter(report => report.attended === false).length;
-
+        const completedLessons = reports.filter(report => report.completeLesson === true).length;
 
         return res.status(200).json({
             success: true,
@@ -341,6 +339,7 @@ export const getUserStats = async (req: Request, res: Response) => {
                 completedLessons,
                 attendedLessons,
                 missedLessons,
+                GroupReports: reports,
                 GroupName: userGroup.name,
                 GroupMeetingLink: userGroup.meetingLink,
                 GroupUsualDate: userGroup.usualDate,
