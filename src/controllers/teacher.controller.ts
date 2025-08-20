@@ -10,37 +10,44 @@ export class TeacherController {
 
     async getTeachers(req: Request, res: Response){
         try {
-            const teachers: ITeacher[] = await Teacher.find();
-            const userTeahcer = await User.find({ role: 'teacher' }).select('-password');
-            res.status(200).json({ teachers, userTeahcer });
+            const teachers: ITeacher[] = await Teacher.find().populate('userId', 'name email phone');
+            const userTeacher = await User.find({ role: 'teacher' }).select('-password');
+            return res.status(200).json({ teachers, userTeacher });
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving teachers", error });
+            return res.status(500).json({ message: "Error retrieving teachers", error });
         }
     }
 
     async getTeacherById(req: Request, res: Response){
         const { id } = req.params;
         try {
-            const teacher: ITeacher | null = await Teacher.findById(id);
+            const teacher: ITeacher | null = await Teacher.findById(id).populate('userId', 'name email phone');
             if (!teacher) {
-                res.status(404).json({ message: "Teacher not found" });
-                return;
+                return res.status(404).json({ message: "Teacher not found" });
             }
-            res.status(200).json(teacher);
+            return res.status(200).json(teacher);
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving teacher", error });
+            return res.status(500).json({ message: "Error retrieving teacher", error });
         }
     }
 
     async createTeacher(req: Request, res: Response){
-        const { name, email, password, phone,specialization,meetingLink,availability } = req.body;
+        const { name, email, password, phone, specialization, country, city, meetingLink, availability } = req.body;
 
         try {
+            // Check if user already exists
+            const existingUser = await User.findOne({ email });
+            if (existingUser) {
+                return res.status(400).json({ message: "User with this email already exists" });
+            }
+
             const newUser = new User({
                 name,
                 email,
                 password,
                 phone,
+                country,
+                city,
                 role: 'teacher',
                 numOfPartsofQuran: 0,
                 quranMemorized: '',
@@ -50,17 +57,21 @@ export class TeacherController {
                 PubliclessonCredits: 0,
             });
             await newUser.save();
+            
             const newTeacher = new Teacher({
                 userId: newUser._id,
                 specialization,
                 meetingLink,
-                numberOflessons: 0, 
+                numberOflessonsCridets: 0, 
                 availability
             });
             await newTeacher.save();
-            res.status(201).json(newTeacher);
+            
+            // Populate the teacher data before returning
+            const populatedTeacher = await Teacher.findById(newTeacher._id).populate('userId', 'name email phone');
+            return res.status(201).json(populatedTeacher);
         } catch (error) {
-            res.status(500).json({ message: "Error creating teacher", error });
+            return res.status(500).json({ message: "Error creating teacher", error });
         }
     }
 
@@ -73,14 +84,14 @@ export class TeacherController {
                 id,
                 { specialization, meetingLink, availability },
                 { new: true }
-            );
+            ).populate('userId', 'name email phone');
+            
             if (!updatedTeacher) {
-                res.status(404).json({ message: "Teacher not found" });
-                return;
+                return res.status(404).json({ message: "Teacher not found" });
             }
-            res.status(200).json(updatedTeacher);
+            return res.status(200).json(updatedTeacher);
         } catch (error) {
-            res.status(500).json({ message: "Error updating teacher", error });
+            return res.status(500).json({ message: "Error updating teacher", error });
         }
     }
 
@@ -90,13 +101,14 @@ export class TeacherController {
         try {
             const deletedTeacher: ITeacher | null = await Teacher.findByIdAndDelete(id);
             if (!deletedTeacher) {
-                res.status(404).json({ message: "Teacher not found" });
-                return;
+                return res.status(404).json({ message: "Teacher not found" });
             }
+            
+            // Delete the associated user account
             await User.findByIdAndDelete(deletedTeacher.userId);
-            res.status(200).json({ message: "Teacher deleted successfully" });
+            return res.status(200).json({ message: "Teacher deleted successfully" });
         } catch (error) {
-            res.status(500).json({ message: "Error deleting teacher", error });
+            return res.status(500).json({ message: "Error deleting teacher", error });
         }
     }
 
@@ -104,34 +116,50 @@ export class TeacherController {
         const { id } = req.params;
 
         try {
-            const lessons: ILesson[] = await Lesson.find({ teacherId: id }).populate('groupId').populate('reportId');
+            // First find groups taught by this teacher
+            const groups = await LessonGroup.find({ teacherId: id });
+            const groupIds = groups.map(group => group._id);
+            
+            // Then find lessons for these groups
+            const lessons: ILesson[] = await Lesson.find({ groupId: { $in: groupIds } })
+                .populate('groupId', 'name type meetingLink')
+                .populate('reportId');
+                
             if (!lessons || lessons.length === 0) {
-                res.status(404).json({ message: "No lessons found for this teacher" });
-                return;
+                return res.status(404).json({ message: "No lessons found for this teacher" });
             }
-            res.status(200).json(lessons);
+            return res.status(200).json(lessons);
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving lessons", error });
+            return res.status(500).json({ message: "Error retrieving lessons", error });
         }
     }
 
     async getMyLessons(req: Request, res: Response) {
-        const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
-        const teacher = await Teacher.findOne({ userId: userId });
-        if (!teacher) {
-            res.status(404).json({ message: "Teacher profile not found" });
-            return;
-        }
-        const teacherId = teacher._id;
+        const userId = (req as any).user._id;
+        
         try {
-            const lessons: ILesson[] = await Lesson.find({ teacherId }).populate('groupId').populate('reportId').populate('homework');
-            if (!lessons || lessons.length === 0) {
-                res.status(404).json({ message: "No lessons found for this teacher" });
-                return;
+            const teacher = await Teacher.findOne({ userId: userId });
+            if (!teacher) {
+                return res.status(404).json({ message: "Teacher profile not found" });
             }
-            res.status(200).json(lessons);
+            
+            // Find groups taught by this teacher
+            const groups = await LessonGroup.find({ teacherId: teacher._id });
+            const groupIds = groups.map(group => group._id);
+            
+            // Find lessons for these groups
+            const lessons: ILesson[] = await Lesson.find({ groupId: { $in: groupIds } })
+                .populate('groupId', 'name type meetingLink')
+                .populate('reportId')
+                .populate('homework')
+                .sort({ scheduledAt: -1 });
+                
+            if (!lessons || lessons.length === 0) {
+                return res.status(404).json({ message: "No lessons found for this teacher" });
+            }
+            return res.status(200).json(lessons);
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving lessons", error });
+            return res.status(500).json({ message: "Error retrieving lessons", error });
         }
     }
 
@@ -139,34 +167,39 @@ export class TeacherController {
         const { id } = req.params;
 
         try {
-            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId: id }).populate('teacherId').populate('students');
+            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId: id })
+                .populate('teacherId', 'userId specialization meetingLink')
+                .populate('members', 'name email phone');
+                
             if (!groups || groups.length === 0) {
-                res.status(404).json({ message: "No groups found for this teacher" });
-                return;
+                return res.status(404).json({ message: "No groups found for this teacher" });
             }
-            res.status(200).json(groups);
+            return res.status(200).json(groups);
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving groups", error });
+            return res.status(500).json({ message: "Error retrieving groups", error });
         }
     }
 
     async getMyGroups(req: Request, res: Response){
-        const userId = (req as any).user._id; // Assuming req.user is populated with the authenticated user's info
-        const teacher = await Teacher.findOne({ userId: userId });
-        if (!teacher) {
-            res.status(404).json({ message: "Teacher profile not found" });
-            return;
-        }
-        const teacherId = teacher._id;
+        const userId = (req as any).user._id;
+        
         try {
-            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId }).populate('teacherId').populate('students');
-            if (!groups || groups.length === 0) {
-                res.status(404).json({ message: "No groups found for this teacher" });
-                return;
+            const teacher = await Teacher.findOne({ userId: userId });
+            if (!teacher) {
+                return res.status(404).json({ message: "Teacher profile not found" });
             }
-            res.status(200).json(groups);
+            
+            const groups: ILessonGroup[] = await LessonGroup.find({ teacherId: teacher._id })
+                .populate('teacherId', 'userId specialization meetingLink')
+                .populate('members', 'name email phone')
+                .populate('lessons');
+                
+            if (!groups || groups.length === 0) {
+                return res.status(404).json({ message: "No groups found for this teacher" });
+            }
+            return res.status(200).json(groups);
         } catch (error) {
-            res.status(500).json({ message: "Error retrieving groups", error });
+            return res.status(500).json({ message: "Error retrieving groups", error });
         }
     }
 }
