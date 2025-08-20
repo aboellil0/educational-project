@@ -165,4 +165,18 @@ export class AdminController {
             return res.status(500).json({ message: 'Error fetching students', error });
         }
     }
+
+    async deleteMember(req: Request, res: Response) {
+        const { id } = req.params;
+
+        try {
+            const member = await User.findByIdAndDelete(id);
+            if (!member) {
+                return res.status(404).json({ message: 'Member not found' });
+            }
+            return res.status(200).json({ message: 'Member deleted successfully' });
+        } catch (error) {
+            return res.status(500).json({ message: 'Error deleting member', error });
+        }
+    }
 }

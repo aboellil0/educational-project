@@ -5,7 +5,6 @@ import {
     getUserProfile, 
     updateUserProfile, 
     verifyUser, 
-    deleteUser, 
     getAllUsers, 
     updateCredits 
 } from '../controllers/user.controller';
@@ -36,7 +35,7 @@ router.put('/profile', isAuthenticated as any,isAdmin as any, updateUserProfile 
 router.patch('/verify', isAuthenticated as any,isAdmin as any, verifyUser as any);
 
 // Delete user account
-router.delete('/profile', isAuthenticated as any,isAdmin as any, deleteUser as any);
+router.delete('/member/:id', isAuthenticated as any,isAdmin as any, adminController.deleteMember as any);
 
 // Get all users (admin only)
 router.get('/all', isAuthenticated as any,isAdmin as any, getAllUsers as any);
