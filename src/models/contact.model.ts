@@ -11,7 +11,6 @@ export interface IContactInfo extends Document {
     email?: string;
     address?: string;
     isActive: boolean;
-    updatedBy: ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -24,8 +23,7 @@ const contactInfoSchema = new Schema<IContactInfo>({
     address: {type:String},
     telegramLink: { type: String, default: '' },
     email: { type: String, default: '' },
-    isActive: { type: Boolean, default: true },
-    updatedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    isActive: { type: Boolean, default: true }
 }, {
     timestamps: true,
 });

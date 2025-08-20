@@ -16,6 +16,7 @@ import groupRoutes from './routes/group.routes';
 import lessonRoutes from './routes/lesson.routes';
 import reportRoutes from './routes/report.routes';
 import teacherRoutes from './routes/teacher.routes';
+import courseRoutes from './routes/course.routes';
 
 
 
@@ -53,6 +54,7 @@ const server = async (): Promise<void> => {
   app.use('/api/group', groupRoutes);
   app.use('/api/lesson', lessonRoutes);
   app.use('/api/report',reportRoutes);
+  app.use('/api/course', courseRoutes);
 
 
   // Error handler middleware

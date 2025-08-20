@@ -25,7 +25,8 @@ export class TeacherController {
             if (!teacher) {
                 return res.status(404).json({ message: "Teacher not found" });
             }
-            return res.status(200).json(teacher);
+            const teacherUser = await User.findById(teacher.userId).select('-password');
+            return res.status(200).json({ teacher, teacherUser });
         } catch (error) {
             return res.status(500).json({ message: "Error retrieving teacher", error });
         }
@@ -77,7 +78,7 @@ export class TeacherController {
 
     async updateTeacher(req: Request, res: Response){
         const { id } = req.params;
-        const { specialization, meetingLink, availability } = req.body;
+        const { specialization, meetingLink, availability,name,email,phone,city,country } = req.body;
 
         try {
             const updatedTeacher: ITeacher | null = await Teacher.findByIdAndUpdate(
@@ -89,7 +90,11 @@ export class TeacherController {
             if (!updatedTeacher) {
                 return res.status(404).json({ message: "Teacher not found" });
             }
-            return res.status(200).json(updatedTeacher);
+            const updateUser = await User.findByIdAndUpdate(updatedTeacher?.userId, { name, email, phone, city, country }, { new: true });
+            if (!updateUser) {
+                return res.status(404).json({ message: "User not found" });
+            }
+            return res.status(200).json({ updatedTeacher, updateUser });
         } catch (error) {
             return res.status(500).json({ message: "Error updating teacher", error });
         }

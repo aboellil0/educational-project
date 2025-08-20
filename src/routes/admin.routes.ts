@@ -25,6 +25,12 @@ router.put('/members/:id', isAuthenticated as any,isAdmin as any, adminControlle
 // Update contact information
 router.put('/contact', isAuthenticated as any,isAdmin as any, adminController.updateContactInfo as any);
 
+// Get contact information
+router.get('/contact', isAuthenticated as any,isAdmin as any, adminController.getContactInfo as any);
+
+// create contact information
+router.post('/contact', isAuthenticated as any,isAdmin as any, adminController.createContactInfo as any);
+
 // Get user profile
 router.get('/profile', isAuthenticated as any,isAdminOrTeacher as any, getUserProfile as any);
 

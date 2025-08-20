@@ -84,6 +84,41 @@ export class AdminController {
         }
     }
 
+    async createContactInfo(req: Request, res: Response) {
+        try {
+            const { email, phone, address, whatsapp, telegramLink, facebook, linkedin } = req.body;
+
+            // Create a new contact info document
+            const contactInfo = new ContactInfo({
+                email,
+                phone,
+                address,
+                whatsappNumber: whatsapp,
+                telegramLink,
+                facebook,
+                linkedin
+            });
+
+            await contactInfo.save();
+            return res.status(201).json(contactInfo);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error creating contact information', error });
+        }
+    }
+
+    async getContactInfo(req: Request, res: Response) {
+        try {
+            const contactInfo = await ContactInfo.findOne();
+            if (!contactInfo) {
+                return res.status(404).json({ message: 'Contact information not found' });
+            }
+            return res.status(200).json(contactInfo);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error fetching contact information', error });
+        }
+    }
+    
+
     async updateContactInfo(req: Request, res: Response) {
         try {
             const { email, phone, address, whatsapp,telegramLink, facebook, linkedin } = req.body;
