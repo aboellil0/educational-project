@@ -19,7 +19,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"phone\": \"string\",\n  \"quranMemorized\": \"string\",\n  \"numOfPartsofQuran\": 0\n}",
+              "raw": "{\n  \"name\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"phone\": \"string\",\n  \"age\": 0,\n  \"quranMemorized\": \"string\",\n  \"numOfPartsofQuran\": 0,\n  \"country\": \"string\",\n  \"city\": \"string\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -154,6 +154,24 @@
                   "language": "json"
                 }
               }
+            }
+          }
+        },
+        {
+          "name": "Get Auth Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "profile"]
             }
           }
         }
@@ -1198,7 +1216,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"phone\": \"string\",\n  \"quranMemorized\": \"string\",\n  \"numOfPartsofQuran\": 0\n}",
+              "raw": "{\n  \"name\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"phone\": \"string\",\n  \"age\": 0,\n  \"quranMemorized\": \"string\",\n  \"numOfPartsofQuran\": 0,\n  \"country\": \"string\",\n  \"city\": \"string\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1238,6 +1256,51 @@
           "name": "Update Contact Information",
           "request": {
             "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "contact"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"string\",\n  \"phone\": [\"string\"],\n  \"address\": \"string\",\n  \"whatsapp\": [\"string\"],\n  \"telegramLink\": \"string\",\n  \"facebook\": \"string\",\n  \"linkedin\": \"string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Contact Information",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "contact"]
+            }
+          }
+        },
+        {
+          "name": "Create Contact Information",
+          "request": {
+            "method": "POST",
             "header": [
               {
                 "key": "Authorization",
@@ -1408,6 +1471,30 @@
               "raw": "{{base_url}}/api/admin/students",
               "host": ["{{base_url}}"],
               "path": ["api", "admin", "students"]
+            }
+          }
+        },
+        {
+          "name": "Delete Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/member/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "member", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           }
         }
