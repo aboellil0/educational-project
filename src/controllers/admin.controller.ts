@@ -22,11 +22,11 @@ export class AdminController {
 
     async addMember(req: Request, res: Response) {
         try {
-            const { name, email, password, phone, quranMemorized, numOfPartsofQuran } = req.body;
+            const { name, email, password, phone, quranMemorized, county, city, numOfPartsofQuran } = req.body;
 
             // Validate required fields
-            if (!name || !email || !password || !phone) {
-                return res.status(400).json({ message: 'Name, email, password, and phone are required' });
+            if (!name || !email || !password || !phone || !county || !city) {
+                return res.status(400).json({ message: 'Name, email, password, phone, county, and city are required' });
             }
 
             const newMember = new User({
@@ -34,6 +34,8 @@ export class AdminController {
                 email,
                 password,
                 phone,
+                county,
+                city,
                 quranMemorized: quranMemorized || '',
                 numOfPartsofQuran: numOfPartsofQuran || 0,
                 role: 'student', // Default role
