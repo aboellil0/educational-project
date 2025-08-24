@@ -72,9 +72,7 @@ export class ReportController {
                 return res.status(400).json({ message: 'Invalid lesson ID' });
             }
 
-            const reports = await LessonReport.find({ lessonId })
-                .populate('studentId', 'name email')
-                .populate('teacherId', 'name email');
+            const reports = await LessonReport.find({ lessonId }).populate('sudentId');
 
             if (!reports) {
                 return res.status(404).json({ message: 'No reports found for this lesson' });
@@ -161,10 +159,10 @@ export class ReportController {
                 return res.status(400).json({ message: 'Invalid student ID' });
             }
 
-            const reports = await LessonReport.find({ studentId })
+            const reports = await LessonReport.find({ sudentId: studentId })
                 .populate('lessonId', 'title date time');
 
-            if (!reports) {
+            if (reports.length === 0) {
                 return res.status(404).json({ message: 'No reports found for this student' });
             }
 
