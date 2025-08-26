@@ -216,4 +216,27 @@ export class AdminController {
             return res.status(500).json({ message: 'Error deleting member', error });
         }
     }
+
+    async getAllAdmins(req: Request, res: Response) {
+        try {
+            const admins = await User.find({ role: 'admin' }).select('-password');
+            return res.status(200).json(admins);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error fetching admins', error });
+        }
+    }
+
+    async getAdminById(req: Request, res: Response) {
+        const { id } = req.params;
+
+        try {
+            const admin = await User.findById(id).select('-password');
+            if (!admin || admin.role !== 'admin') {
+                return res.status(404).json({ message: 'Admin not found' });
+            }
+            return res.status(200).json(admin);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error fetching admin', error });
+        }
+    }
 }

@@ -58,4 +58,10 @@ router.post('/addNumberOfLessonsCredits', isAuthenticated as any,isAdmin as any,
 // get all students
 router.get('/students', isAuthenticated as any,isAdmin as any, adminController.getAllStudents as any);
 
+// get all admins
+router.get('/admins', isAuthenticated as any,isAdmin as any, adminController.getAllAdmins as any);
+
+// get admin by id
+router.get('/admins/:id', isAuthenticated as any,isAdmin as any, adminController.getAdminById as any);
+
 export default router;
