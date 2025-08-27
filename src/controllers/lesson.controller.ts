@@ -21,15 +21,28 @@ export class LessonController {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            const membersIDs = await LessonGroup.findById(lesson.groupId).select('members'); // THIS IS THE ID OF THE MEMBERS
-            // get the names of the members
-            if (!membersIDs) {
+            const group = await LessonGroup.findById(lesson.groupId);
+            if (!group) {
                 return res.status(404).json({ message: 'Lesson group not found' });
             }
-            
-            const memberNames = await User.find({ _id: { $in: membersIDs } }).select('name email');
 
-            res.status(200).json({ lesson, membersIDs, memberNames });
+            const members = await User.find({ _id: { $in: group.members } })
+                .select('_id name');
+
+            // Return simplified lesson details
+            const lessonDetails = {
+                _id: lesson._id,
+                subject: lesson.subject,
+                scheduledAt: lesson.scheduledAt,
+                meetingLink: lesson.meetingLink,
+                status: lesson.status,
+                homework: lesson.homework
+            };
+
+            res.status(200).json({
+                lesson: lessonDetails,
+                members
+            });
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }

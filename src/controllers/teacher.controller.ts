@@ -152,9 +152,16 @@ export class TeacherController {
             const groups = await LessonGroup.find({ teacherId: teacher._id });
             const groupIds = groups.map(group => group._id);
             
-            // Find lessons for these groups
+            // Find lessons for these groups and populate group with members
             const lessons: ILesson[] = await Lesson.find({ groupId: { $in: groupIds } })
-                .populate('groupId', 'name type meetingLink')
+                .populate({
+                    path: 'groupId',
+                    select: 'name type meetingLink members',
+                    populate: {
+                        path: 'members',
+                        select: '_id'
+                    }
+                })
                 .populate('reportId')
                 .populate('homework')
                 .sort({ scheduledAt: -1 });
@@ -162,7 +169,17 @@ export class TeacherController {
             if (!lessons || lessons.length === 0) {
                 return res.status(404).json({ message: "No lessons found for this teacher" });
             }
-            return res.status(200).json(lessons);
+
+            // Add member count to each lesson
+            const lessonsWithMemberCount = lessons.map(lesson => {
+                const lessonObj = lesson.toObject();
+                if (lessonObj.groupId && lessonObj.groupId.members) {
+                    lessonObj.groupId.memberCount = lessonObj.groupId.members.length;
+                }
+                return lessonObj;
+            });
+
+            return res.status(200).json(lessonsWithMemberCount);
         } catch (error) {
             return res.status(500).json({ message: "Error retrieving lessons", error });
         }
