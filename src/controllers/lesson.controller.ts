@@ -20,11 +20,13 @@ export class LessonController {
                 .populate('teacherId', 'name email')
                 .populate('members', 'name email');
 
+            const membersOfLesson = await LessonGroup.findById(lesson?.groupId).select('members');
+
             if (!lesson) {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            res.status(200).json(lesson);
+            res.status(200).json({ lesson,  membersOfLesson });
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
