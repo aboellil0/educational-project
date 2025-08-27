@@ -25,8 +25,8 @@ export class AdminController {
             const { name, email, password, phone, quranMemorized, county, city, numOfPartsofQuran } = req.body;
 
             // Validate required fields
-            if (!name || !email || !password || !phone || !county || !city) {
-                return res.status(400).json({ message: 'Name, email, password, phone, county, and city are required' });
+            if (!name || !email || !password || !phone) {
+                return res.status(400).json({ message: 'Name, email, password, phone, are required' });
             }
 
             const newMember = new User({
