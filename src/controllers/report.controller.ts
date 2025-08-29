@@ -160,11 +160,7 @@ export class ReportController {
             }
 
             const reports = await LessonReport.find({ sudentId: studentId })
-                .populate('lessonId', 'title date time');
-
-            if (reports.length === 0) {
-                return res.status(404).json({ message: 'No reports found for this student' });
-            }
+                .populate('lessonId');
 
             res.status(200).json(reports);
         } catch (error) {

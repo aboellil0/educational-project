@@ -71,9 +71,15 @@ export class GroupController {
         try {
             const groups = await LessonGroup.find()
                 .populate('teacherId', 'name email')
-                .populate('members', 'name email')
                 .populate('lessons');
-
+            
+            // get the teaher name and email for each group
+            for (const group of groups) {
+                const userid = await Teacher.findById(group.teacherId);
+                const teacher = await User.findById(userid?._id).select('name email');
+                (group as any).teacherName = teacher;
+            }
+            
             res.status(200).json(groups);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });

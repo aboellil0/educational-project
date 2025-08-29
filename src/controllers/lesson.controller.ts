@@ -158,9 +158,7 @@ export class LessonController {
                 { subject, scheduledAt, meetingLink, homework },
                 { new: true }
             )
-            .populate('groupId', 'name description type teacherId members meetingLink usualDate')
-            .populate('teacherId', 'name email')
-            .populate('members', 'name email');
+            .populate('groupId');
 
             if (!updatedLesson) {
                 return res.status(404).json({ message: 'Lesson not found' });
