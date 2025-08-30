@@ -15,15 +15,28 @@ export class LessonController {
                 return res.status(400).json({ message: 'Invalid lesson ID' });
             }
 
-            // get thelesson details with the members name and id and email
+            // get the lesson details with the members name and id and email
             const lesson = await Lesson.findById(lessonId)
-                .populate('members', 'name email _id');
-            
+                .populate<{ groupId: { members: { name: string, email: string }[], name: string, type: string } }>({
+                    path: 'groupId',
+                    select: 'name type',
+                    populate: {
+                        path: 'members',
+                        select: 'name email'
+                    }
+                });
+                        
             if (!lesson) {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            res.status(200).json(lesson);
+            // Add the number of members to the response
+            const responseData = {
+                ...lesson.toObject(),
+                memberCount: lesson.groupId.members?.length || 0
+            };
+
+            res.status(200).json(responseData);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }

@@ -6,7 +6,6 @@ export interface ILesson extends Document {
   groupId: ObjectId;
   reportId?: ObjectId[]; // Optional reference to a lesson report
   subject: string;
-  studentId: ObjectId;
   scheduledAt: Date;
   meetingLink: string;
   status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
@@ -21,7 +20,6 @@ export interface ILesson extends Document {
 
 const lessonSchema = new Schema<ILesson>({
   groupId: { type: Schema.Types.ObjectId, ref: 'LessonGroup', required: true },
-  studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   reportId: [{ type: Schema.Types.ObjectId, ref: 'LessonReport' }], // Optional reference to a lesson report
   subject: { type: String, required: true }, // e.g., "Surah Al-Fatiha", "Juz 1"
   scheduledAt: { type: Date, required: true },
