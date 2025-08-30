@@ -15,34 +15,15 @@ export class LessonController {
                 return res.status(400).json({ message: 'Invalid lesson ID' });
             }
 
-            const lesson = await Lesson.findById(lessonId);
-
+            // get thelesson details with the members name and id and email
+            const lesson = await Lesson.findById(lessonId)
+                .populate('members', 'name email _id');
+            
             if (!lesson) {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            const group = await LessonGroup.findById(lesson.groupId);
-            if (!group) {
-                return res.status(404).json({ message: 'Lesson group not found' });
-            }
-
-            const members = await User.find({ _id: { $in: group.members } })
-                .select('_id name');
-
-            // Return simplified lesson details
-            const lessonDetails = {
-                _id: lesson._id,
-                subject: lesson.subject,
-                scheduledAt: lesson.scheduledAt,
-                meetingLink: lesson.meetingLink,
-                status: lesson.status,
-                homework: lesson.homework
-            };
-
-            res.status(200).json({
-                lesson: lessonDetails,
-                members
-            });
+            res.status(200).json(lesson);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
