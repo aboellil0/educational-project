@@ -379,29 +379,10 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
         }
         const lastSession = await Lesson.findOne({ groupId: lessonGroup._id, status: 'completed' }).sort({ date: -1 });
 
-        if (!lastSession) {
-            return res.status(404).json({ 
-                success: false,
-                message: "No completed sessions found" 
-            });
-        }
-
-        const lastReport = await LessonReport.findOne({ lessonId: lastSession._id, sudentId : userId }).sort({ createdAt: -1 });
+        const lastReport = await LessonReport.findOne({ lessonId: lastSession?._id, sudentId : userId }).sort({ createdAt: -1 });
         
-        if (!lastReport) {
-            return res.status(404).json({ 
-                success: false,
-                message: "No report found for the last session" 
-            });
-        }
 
         const nextLesson = await Lesson.findOne({ groupId: lessonGroup._id, status: 'scheduled' }).sort({ date: 1 });
-        if (!nextLesson) {
-            return res.status(404).json({ 
-                success: false,
-                message: "No upcoming lessons found" 
-            });
-        }
 
         return res.status(200).json({
             success: true,
@@ -409,8 +390,8 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
             nextLesson: nextLesson, 
             lastSession: lastSession,
             lastReport: lastReport,
-            wantedForNextLesson: lastReport.wantedForNextLesson,
-            newMemorized: lastReport.newMemorized,
+            wantedForNextLesson: lastReport?.wantedForNextLesson,
+            newMemorized: lastReport?.newMemorized,
         });
     } catch (error) {
         return handleError(res, error, "retrieving next lesson");

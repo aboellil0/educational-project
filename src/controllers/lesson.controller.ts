@@ -228,14 +228,10 @@ export class LessonController {
                             });
                             await newReport.save();
                         }
-                        if (group.type === 'private') {
-                            member.PrivitelessonCredits -= 1;
-                            await member.save();
-                        }
-                        if (group.type === 'public') {
-                            member.PubliclessonCredits -= 1;
-                            await member.save();
-                        }
+                        member.PrivitelessonCredits -= 1;
+                        member.PubliclessonCredits -= 1;
+                        await member.save();
+                        
                     }
                 }));
             }
