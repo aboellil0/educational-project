@@ -45,7 +45,7 @@ const lessonReportSchema = new Schema<ILessonReport>({
     },
     doneHomework: { type: Boolean, default: false }, // Indicates if the student completed the homework
     notes: { type: String, required: false },
-    rating: { type: Number, min: 1, max: 5, required: false },
+    rating: { type: Number, min: 0, max: 5, required: false },
 }, {
     timestamps: true
 });

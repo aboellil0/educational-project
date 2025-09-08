@@ -54,18 +54,33 @@ export class GroupController {
                 .populate({
                     path: 'teacherId',
                     populate: {
-                        path: 'userId', // assuming Teacher model has userId field referencing User
+                        path: 'userId',
                         select: 'name email'
                     }
                 })
-                .populate('members', 'name email')
+                .populate('members', 'name email PrivitelessonCredits PubliclessonCredits')
                 .populate('lessons');
 
             if (!group) {
                 return res.status(404).json({ message: 'Group not found' });
             }
 
-            res.status(200).json({ group });
+            // Filter members with credits >= 1
+            const eligibleMembers = group.members.filter((member: any) => 
+                (member.PrivitelessonCredits && member.PrivitelessonCredits >= 1) ||
+                (member.PubliclessonCredits && member.PubliclessonCredits >= 1)
+            );
+
+            const response = {
+                group: {
+                    ...group.toObject(),
+                    members: eligibleMembers, // Only members with credits >= 1
+                    totalEligibleMembers: eligibleMembers.length,
+                    allMembers: group.members // Keep all members if needed
+                }
+            };
+
+            res.status(200).json(response);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
