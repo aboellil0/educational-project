@@ -51,7 +51,13 @@ export class GroupController {
             }
 
             const group = await LessonGroup.findById(groupId)
-                .populate('teacherId', 'name email')
+                .populate({
+                    path: 'teacherId',
+                    populate: {
+                        path: 'userId', // assuming Teacher model has userId field referencing User
+                        select: 'name email'
+                    }
+                })
                 .populate('members', 'name email')
                 .populate('lessons');
 
@@ -59,10 +65,7 @@ export class GroupController {
                 return res.status(404).json({ message: 'Group not found' });
             }
 
-            const userid = await Teacher.findById(group.teacherId);
-            const teacherName = await User.findById(userid?._id).select('name');
-
-            res.status(200).json({ group, teacherName });
+            res.status(200).json({ group });
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
@@ -70,15 +73,14 @@ export class GroupController {
     async getAllGroups(req: Request, res: Response) {
         try {
             const groups = await LessonGroup.find()
-                .populate('teacherId', 'name email')
+                .populate({
+                    path: 'teacherId',
+                    populate: {
+                        path: 'userId', // assuming Teacher model has userId field referencing User
+                        select: 'name email'
+                    }
+                })
                 .populate('lessons');
-            
-            // get the teaher name and email for each group
-            for (const group of groups) {
-                const userid = await Teacher.findById(group.teacherId);
-                const teacher = await User.findById(userid?._id).select('name email');
-                (group as any).teacherName = teacher;
-            }
             
             res.status(200).json(groups);
         } catch (error) {

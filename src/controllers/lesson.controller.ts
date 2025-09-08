@@ -239,6 +239,12 @@ export class LessonController {
                     }
                 }));
             }
+
+            return res.status(200).json({ 
+                message: 'Lesson completed successfully',
+                lesson: updatedLesson 
+            });
+
         } catch (error) {
             console.error('Error updating lesson credits:', error);
             return res.status(500).json({ message: 'Server error while updating lesson credits' });

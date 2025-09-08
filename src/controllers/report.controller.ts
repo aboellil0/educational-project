@@ -93,7 +93,7 @@ export class ReportController {
 
             const report = await LessonReport.findById(reportId)
                 .populate('studentId', 'name email')
-                .populate('teacherId', 'name email');
+                .populate('lessonId', 'string scheduledAt');
 
             if (!report) {
                 return res.status(404).json({ message: 'Report not found' });
