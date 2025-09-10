@@ -22,7 +22,7 @@ export class AdminController {
 
     async addMember(req: Request, res: Response) {
         try {
-            const { name, email, password, phone, quranMemorized, county, city, age, numOfPartsofQuran } = req.body;
+            const { name, email, password, phone, quranMemorized, country, city, age, numOfPartsofQuran } = req.body;
 
             // Validate required fields
             if (!name || !email || !password || !phone) {
@@ -35,7 +35,7 @@ export class AdminController {
                 password,
                 phone,
                 age,
-                county,
+                country,
                 city,
                 quranMemorized: quranMemorized || '',
                 numOfPartsofQuran: numOfPartsofQuran || 0,
