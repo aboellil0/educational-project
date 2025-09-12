@@ -17,6 +17,7 @@ import lessonRoutes from './routes/lesson.routes';
 import reportRoutes from './routes/report.routes';
 import teacherRoutes from './routes/teacher.routes';
 import courseRoutes from './routes/course.routes';
+import reviewsRoutes from './routes/reviews.routes';
 
 
 
@@ -55,6 +56,7 @@ const server = async (): Promise<void> => {
   app.use('/api/lesson', lessonRoutes);
   app.use('/api/report',reportRoutes);
   app.use('/api/course', courseRoutes);
+  app.use('/api/reviews', reviewsRoutes);
 
 
   // Error handler middleware
