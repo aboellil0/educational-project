@@ -19,7 +19,8 @@ import teacherRoutes from './routes/teacher.routes';
 import courseRoutes from './routes/course.routes';
 import reviewsRoutes from './routes/reviews.routes';
 
-
+// Swagger setup
+import { setupSwagger } from './config/swagger';
 
 import path from 'path';
 import { config } from './config/enviroment';
@@ -47,6 +48,9 @@ const server = async (): Promise<void> => {
   // Serve static files for testing frontend
   app.use(express.static(path.join(__dirname, '../public')));
 
+  // Setup Swagger documentation
+  setupSwagger(app);
+
   // Routes
   app.use('/api/auth', authRoutes);
   app.use('/api/teacher',teacherRoutes);
@@ -58,6 +62,14 @@ const server = async (): Promise<void> => {
   app.use('/api/course', courseRoutes);
   app.use('/api/reviews', reviewsRoutes);
 
+  // Welcome route
+  app.get('/', (req: Request, res: Response) => {
+    res.json({
+      message: 'Welcome to Quran Memorization & Islamic Education Platform API',
+      documentation: '/api-docs',
+      version: '1.0.0'
+    });
+  });
 
   // Error handler middleware
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -68,11 +80,23 @@ const server = async (): Promise<void> => {
     });
   });
 
+  // Connect to MongoDB
+  try {
+    await mongoose.connect(config.mongoUri);
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+
   // Start server
   const PORT = config.port;
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
   });
-}
+};
+
+server().catch(console.error);
 
 export default server;
