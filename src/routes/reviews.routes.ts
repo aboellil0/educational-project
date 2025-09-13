@@ -12,6 +12,7 @@ router.get('/:id', reviewsController.getReviewById as RequestHandler);
 // Admin only routes
 router.put('/:id', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.updateReview as RequestHandler);
 router.delete('/:id', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.deleteReview as RequestHandler);
+router.delete('/all', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.getAllReviews as RequestHandler);
 router.patch('/:id/approve', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.approveReview as RequestHandler);
 
 export default router;

@@ -34,32 +34,13 @@ export const createReview = async (req: Request, res: Response) => {
 // Get all reviews (public - only show non-hidden and admin accepted)
 export const getPublicReviews = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const skip = (page - 1) * limit;
-
     const reviews = await Reviews.find({
-      hide: false,
-      adminAccepted: true
-    })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
-
-    const total = await Reviews.countDocuments({
-      hide: false,
       adminAccepted: true
     });
 
     res.json({
-      reviews,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    });
+      reviews
+    }); 
   } catch (error) {
     console.error('Get public reviews error:', error);
     res.status(500).json({ message: 'Server error while fetching reviews' });
@@ -69,25 +50,9 @@ export const getPublicReviews = async (req: Request, res: Response) => {
 // Get all reviews (admin only - show all reviews)
 export const getAllReviews = async (req: AuthRequest, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const skip = (page - 1) * limit;
-
-    const reviews = await Reviews.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await Reviews.countDocuments();
-
+    const reviews = await Reviews.find();
     res.json({
-      reviews,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      reviews
     });
   } catch (error) {
     console.error('Get all reviews error:', error);
