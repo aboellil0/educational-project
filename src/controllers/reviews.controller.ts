@@ -7,8 +7,8 @@ export const createReview = async (req: Request, res: Response) => {
   try {
     const { name, rating, txt, hide } = req.body;
 
-    if (!name || !txt) {
-      return res.status(400).json({ message: 'Name and text are required' });
+    if (!name || !txt || !rating || rating < 0 || rating > 5 || hide === undefined) {
+      return res.status(400).json({ message: 'Name, text, rating (0-5), and hide status are required' });
     }
 
     const review = new Reviews({

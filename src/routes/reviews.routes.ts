@@ -25,25 +25,24 @@ const router = express.Router();
  *             type: object
  *             required:
  *               - name
- *               - email
+ *               - txt
  *               - rating
- *               - comment
+ *               - hide
  *             properties:
  *               name:
  *                 type: string
  *                 example: "Ahmed Ali"
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "ahmed@example.com"
- *               rating:
- *                 type: number
- *                 minimum: 1
- *                 maximum: 5
- *                 example: 5
- *               comment:
+ *               txt:
  *                 type: string
  *                 example: "Excellent Quran teaching platform with amazing teachers!"
+ *               rating:
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 5
+ *                 example: 5
+ *               hide:
+ *                 type: boolean
+ *                 example: false
  *     responses:
  *       201:
  *         description: Review created successfully
@@ -51,12 +50,14 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Review'
+ *       401:
+ *         description: Unauthorized
  *       400:
  *         description: Validation error
  *       500:
  *         description: Server error
  */
-router.post('/', reviewsController.createReview as RequestHandler);
+router.post('/', isAuthenticated as any, reviewsController.createReview as RequestHandler);
 
 /**
  * @swagger
@@ -64,19 +65,6 @@ router.post('/', reviewsController.createReview as RequestHandler);
  *   get:
  *     summary: Get all approved public reviews
  *     tags: [Reviews]
- *     parameters:
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Number of reviews to return
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination
  *     responses:
  *       200:
  *         description: List of approved reviews
@@ -89,21 +77,33 @@ router.post('/', reviewsController.createReview as RequestHandler);
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Review'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: number
- *                     page:
- *                       type: number
- *                     limit:
- *                       type: number
- *                     totalPages:
- *                       type: number
  *       500:
  *         description: Server error
  */
 router.get('/public', reviewsController.getPublicReviews as RequestHandler);
+
+/**
+ * @swagger
+ * /reviews/all:
+ *   get:
+ *     summary: Get all reviews
+ *     tags: [Reviews]
+ *     responses:
+ *       200:
+ *         description: List of all reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Review'
+ *       500:
+ *         description: Server error
+ */
+router.get('/all', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.getAllReviews as RequestHandler);
 
 /**
  * @swagger
@@ -206,62 +206,6 @@ router.get('/public', reviewsController.getPublicReviews as RequestHandler);
 router.get('/:id', reviewsController.getReviewById as RequestHandler);
 router.put('/:id', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.updateReview as RequestHandler);
 router.delete('/:id', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.deleteReview as RequestHandler);
-
-/**
- * @swagger
- * /reviews/all:
- *   get:
- *     summary: Get all reviews (admin only)
- *     tags: [Reviews]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: approved
- *         schema:
- *           type: boolean
- *         description: Filter by approval status
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 20
- *         description: Number of reviews to return
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Page number for pagination
- *     responses:
- *       200:
- *         description: List of all reviews
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 reviews:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Review'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     total:
- *                       type: number
- *                     page:
- *                       type: number
- *                     limit:
- *                       type: number
- *                     totalPages:
- *                       type: number
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Forbidden - Admin access required
- */
-router.get('/all', isAuthenticated as RequestHandler, isAdmin as RequestHandler, reviewsController.getAllReviews as RequestHandler);
 
 /**
  * @swagger
