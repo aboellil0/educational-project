@@ -10,7 +10,7 @@ export class TeacherController {
 
     async getTeachers(req: Request, res: Response){
         try {
-            const teachers: ITeacher[] = await Teacher.find().populate('userId', 'name email phone');
+            const teachers: ITeacher[] = await Teacher.find().populate('userId', 'name email phone money');
             const userTeacher = await User.find({ role: 'teacher' }).select('-password');
             return res.status(200).json({ teachers, userTeacher });
         } catch (error) {
@@ -21,7 +21,7 @@ export class TeacherController {
     async getTeacherById(req: Request, res: Response){
         const { id } = req.params;
         try {
-            const teacher: ITeacher | null = await Teacher.findById(id).populate('userId', 'name email phone');
+            const teacher: ITeacher | null = await Teacher.findById(id).populate('userId', 'name email phone money');
             if (!teacher) {
                 return res.status(404).json({ message: "Teacher not found" });
             }

@@ -52,7 +52,7 @@ export class AdminController {
     async updateMember(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { name, email, phone,password,age,freeLessonUsed,PrivitelessonCredits,PubliclessonCredits, quranMemorized, numOfPartsofQuran, isVerified } = req.body
+            const { name, email, phone,password,age,money,freeLessonUsed,PrivitelessonCredits,PubliclessonCredits, quranMemorized, numOfPartsofQuran, isVerified } = req.body
 
             // Validate required fields
             if (!name || !email || !phone) {
@@ -63,6 +63,7 @@ export class AdminController {
                 name,
                 email,
                 phone,
+                money,
                 password,
                 age,
                 freeLessonUsed,
