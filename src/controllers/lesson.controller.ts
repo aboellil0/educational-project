@@ -209,7 +209,7 @@ export class LessonController {
             if (group) {
                 const teacher = await Teacher.findById(group.teacherId);
                 if (teacher) {
-                    teacher.numberOflessonsCridets -= 1;
+                    teacher.numberOflessonsCridets += 1;
                     await teacher.save();
                 }
                 
