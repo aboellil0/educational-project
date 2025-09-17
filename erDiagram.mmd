@@ -1,0 +1,145 @@
+erDiagram
+    User {
+        ObjectId _id PK
+        string name
+        string email UK
+        string password
+        string phone
+        enum role "admin, teacher, student"
+        number age
+        string country
+        string city
+        string quranMemorized
+        number numOfPartsofQuran
+        boolean isVerified
+        boolean freeLessonUsed
+        number PrivitelessonCredits
+        number PubliclessonCredits
+        number money
+        string fcmToken
+        string googleId
+        boolean isEmailVerified
+        string emailVerificationToken
+        date emailVerificationExpires
+        string resetPasswordToken
+        date resetPasswordExpires
+        date createdAt
+        date updatedAt
+    }
+
+    Teacher {
+        ObjectId _id PK
+        ObjectId userId FK
+        string[] specialization
+        string meetingLink
+        number numberOflessonsCridets
+        object availability
+        date createdAt
+        date updatedAt
+    }
+
+    LessonGroup {
+        ObjectId _id PK
+        string name
+        string description
+        enum type "private, public"
+        ObjectId teacherId FK
+        ObjectId[] members FK
+        ObjectId[] lessons FK
+        string meetingLink
+        object usualDate
+        boolean isActive
+        date createdAt
+        date updatedAt
+    }
+
+    Lesson {
+        ObjectId _id PK
+        ObjectId groupId FK
+        ObjectId[] reportId FK
+        string subject
+        date scheduledAt
+        string meetingLink
+        enum status "scheduled, in_progress, completed, cancelled"
+        object homework
+        date createdAt
+        date updatedAt
+    }
+
+    LessonReport {
+        ObjectId _id PK
+        ObjectId lessonId FK
+        ObjectId sudentId FK
+        boolean attended
+        boolean completeLesson
+        string content
+        object newMemorized
+        string notes
+        number rating
+        object wantedForNextLesson
+        boolean doneHomework
+        date createdAt
+        date updatedAt
+    }
+
+    Course {
+        ObjectId _id PK
+        string title
+        string description
+        string telegramLink
+        date startAt
+        string duration
+        object[] registrations
+        boolean isActive
+        date createdAt
+        date updatedAt
+    }
+
+    Notification {
+        ObjectId _id PK
+        ObjectId userId FK
+        string title
+        string message
+        enum type "lesson_reminder, payment_confirmed, exam_assigned, account_verified"
+        boolean isRead
+        string[] sentVia
+        object metadata
+        date createdAt
+    }
+
+    Reviews {
+        ObjectId _id PK
+        string name
+        number rating
+        string txt
+        boolean hide
+        boolean adminAccepted
+        date createdAt
+    }
+
+    ContactInfo {
+        ObjectId _id PK
+        string[] whatsappNumber
+        string[] phone
+        string facebook
+        string linkedin
+        string telegramLink
+        string email
+        string address
+        boolean isActive
+        date createdAt
+        date updatedAt
+    }
+
+    %% Relationships
+    User ||--o{ Teacher : "has profile"
+    User ||--o{ Notification : "receives"
+    User ||--o{ LessonReport : "student in"
+    User }o--o{ LessonGroup : "member of"
+    User }o--o{ Course : "registers for"
+    
+    Teacher ||--o{ LessonGroup : "teaches"
+    
+    LessonGroup ||--o{ Lesson : "contains"
+    
+    Lesson ||--o{ LessonReport : "has reports"

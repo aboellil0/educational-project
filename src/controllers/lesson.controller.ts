@@ -17,12 +17,12 @@ export class LessonController {
 
             // get the lesson details with the members name and id and email
             const lesson = await Lesson.findById(lessonId)
-                .populate<{ groupId: { members: { name: string, email: string }[], name: string, type: string } }>({
+                .populate<{ groupId: { members: { name: string, email: string, PrivitelessonCredits: number, PubliclessonCredits: number }[], name: string, type: string } }>({
                     path: 'groupId',
                     select: 'name type',
                     populate: {
                         path: 'members',
-                        select: 'name email'
+                        select: 'name email PrivitelessonCredits PubliclessonCredits'
                     }
                 });
                         
@@ -30,10 +30,19 @@ export class LessonController {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            // Add the number of members to the response
+            // Filter out students who have no credits (both private and public are 0)
+            const membersWithCredits = lesson.groupId.members?.filter(member => 
+                member.PrivitelessonCredits > 0 || member.PubliclessonCredits > 0
+            ) || [];
+
+            // Add the number of members with credits to the response
             const responseData = {
                 ...lesson.toObject(),
-                memberCount: lesson.groupId.members?.length || 0
+                groupId: {
+                    ...lesson.groupId,
+                    members: membersWithCredits
+                },
+                memberCount: membersWithCredits.length
             };
 
             res.status(200).json(responseData);
