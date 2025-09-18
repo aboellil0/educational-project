@@ -377,10 +377,37 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
                 message: "Lesson group not found" 
             });
         }
+        
         const lastSession = await Lesson.findOne({ groupId: lessonGroup._id, status: 'completed' }).sort({ scheduledAt: -1 });
 
-        const lastReport = await LessonReport.findOne({ lessonId: lastSession?._id, sudentId : userId }).sort({ createdAt: -1 });
-        
+        // Try to find the report for the last completed session
+        let lastReport = null;
+        if (lastSession) {
+            const lastSessionReport = await LessonReport.findOne({ 
+                lessonId: lastSession._id, 
+                sudentId: userId 
+            });
+
+            // If user attended the last session, use that report
+            if (lastSessionReport && lastSessionReport.attended) {
+                lastReport = lastSessionReport;
+            } else {
+                // If user didn't attend the last session or no report exists,
+                // find the report from the last session they actually attended
+                const allGroupLessons = await Lesson.find({ 
+                    groupId: lessonGroup._id, 
+                    status: 'completed' 
+                }).sort({ scheduledAt: -1 }).select('_id');
+                
+                const lessonIds = allGroupLessons.map(lesson => lesson._id);
+                
+                lastReport = await LessonReport.findOne({ 
+                    lessonId: { $in: lessonIds }, 
+                    sudentId: userId,
+                    attended: true // Only get reports where user attended
+                }).sort({ createdAt: -1 });
+            }
+        }
 
         const nextLesson = await Lesson.findOne({ groupId: lessonGroup._id, status: 'scheduled' }).sort({ scheduledAt: 1 });
 
