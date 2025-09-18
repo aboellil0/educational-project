@@ -377,12 +377,12 @@ export const wantedForNextLesson = async (req: Request, res: Response) => {
                 message: "Lesson group not found" 
             });
         }
-        const lastSession = await Lesson.findOne({ groupId: lessonGroup._id, status: 'completed' }).sort({ date: -1 });
+        const lastSession = await Lesson.findOne({ groupId: lessonGroup._id, status: 'completed' }).sort({ scheduledAt: -1 });
 
         const lastReport = await LessonReport.findOne({ lessonId: lastSession?._id, sudentId : userId }).sort({ createdAt: -1 });
         
 
-        const nextLesson = await Lesson.findOne({ groupId: lessonGroup._id, status: 'scheduled' }).sort({ date: 1 });
+        const nextLesson = await Lesson.findOne({ groupId: lessonGroup._id, status: 'scheduled' }).sort({ scheduledAt: 1 });
 
         return res.status(200).json({
             success: true,
