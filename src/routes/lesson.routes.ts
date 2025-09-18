@@ -395,6 +395,8 @@ router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHo
  *         description: Server error
  */
 
+router.post('/:id/complete', isAuthenticated as any,isTeacher as any, lessonController.completeLesson as any);
+
 /**
  * @swagger
  * /lesson/{id}/status:
