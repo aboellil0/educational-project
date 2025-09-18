@@ -3,7 +3,7 @@ import type { AxiosResponse } from 'axios';
 import type { InternalAxiosRequestConfig, AxiosRequestConfig } from 'axios';
 
 // Keep this as the base URL for the entire API
-export const API_BASE_URL = 'http://localhost:3000';
+export const API_BASE_URL = 'http://localhost:3001';
 
 interface RefreshTokenResponse {
   accessToken: string;

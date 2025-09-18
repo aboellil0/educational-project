@@ -201,58 +201,98 @@ export class LessonController {
     async completeLesson(req: Request, res: Response) {
         try {
             const lessonId = req.params.id;
+
             if (!Types.ObjectId.isValid(lessonId)) {
                 return res.status(400).json({ message: 'Invalid lesson ID' });
             }
-            const updatedLesson = await Lesson.findByIdAndUpdate(
-                lessonId,
-                { status: 'completed' },
-                { new: true }
-            );
-            if (!updatedLesson) {
+
+            const lesson = await Lesson.findById(lessonId);
+            if (!lesson) {
                 return res.status(404).json({ message: 'Lesson not found' });
             }
 
-            // minus one lesson credit from the teacher and the user
-            const group = await LessonGroup.findById(updatedLesson.groupId);
-            if (group) {
-                const teacher = await Teacher.findById(group.teacherId);
-                if (teacher) {
-                    teacher.numberOflessonsCridets += 1;
-                    await teacher.save();
-                }
-                
-                await Promise.all(group.members.map(async (memberId) => {
-                    const member = await User.findById(memberId);
-                    const report = await LessonReport.findOne({ sudentId: memberId, lessonId: updatedLesson._id});
-                    if (member && member.role === 'student') {
-                        if (report) {
-                            report.attended = true;
-                            await report.save();
-                        } else {
-                            const newReport = new LessonReport({
-                                sudentId: memberId,
-                                lessonId: updatedLesson._id,
-                                attended: true
-                            });
-                            await newReport.save();
-                        }
-                        member.PrivitelessonCredits -= 1;
-                        member.PubliclessonCredits -= 1;
-                        await member.save();
-                        
-                    }
-                }));
+            // Get the group and populate members
+            const group = await LessonGroup.findById(lesson.groupId).populate('members');
+            if (!group) {
+                return res.status(404).json({ message: 'Group not found' });
             }
 
+            // Get all students in the group who have credits
+            const studentsWithCredits = await User.find({
+                _id: { $in: group.members },
+                role: 'student',
+                $or: [
+                    { PrivitelessonCredits: { $gt: 0 } },
+                    { PubliclessonCredits: { $gt: 0 } }
+                ]
+            });
+
+            if (studentsWithCredits.length === 0) {
+                return res.status(400).json({ message: 'No students with sufficient credits found in this group' });
+            }
+
+            const completedStudents = [];
+            const failedStudents = [];
+            let teacherCreditsAdded = 0;
+
+            // Process each student
+            for (const student of studentsWithCredits) {
+                try {
+                    // Deduct lesson credits from the student
+                    if (student.PrivitelessonCredits > 0) {
+                        student.PrivitelessonCredits -= 1;
+                    } else if (student.PubliclessonCredits > 0) {
+                        student.PubliclessonCredits -= 1;
+                    }
+                    await student.save();
+
+                    teacherCreditsAdded += 1;
+
+                    completedStudents.push({
+                        studentId: student._id,
+                        name: student.name,
+                        remainingCredits: {
+                            private: student.PrivitelessonCredits,
+                            public: student.PubliclessonCredits
+                        }
+                    });
+
+                } catch (error) {
+                    failedStudents.push({
+                        studentId: student._id,
+                        name: student.name,
+                        reason: 'Error processing student completion'
+                    });
+                }
+            }
+
+            // Add credits to teacher
+            const teacher = await Teacher.findById(group.teacherId);
+            if (teacher && teacherCreditsAdded > 0) {
+                teacher.numberOflessonsCridets += teacherCreditsAdded;
+                await teacher.save();
+            }
+
+            // Update lesson status to completed
+            lesson.status = 'completed';
+            await lesson.save();
+
             return res.status(200).json({ 
-                message: 'Lesson completed successfully',
-                lesson: updatedLesson 
+                message: 'Lesson completion processed for all eligible students',
+                lessonId: lessonId,
+                summary: {
+                    totalEligibleStudents: studentsWithCredits.length,
+                    completedSuccessfully: completedStudents.length,
+                    failed: failedStudents.length,
+                    teacherCreditsAdded: teacherCreditsAdded
+                },
+                completedStudents: completedStudents,
+                failedStudents: failedStudents
             });
 
         } catch (error) {
-            console.error('Error updating lesson credits:', error);
-            return res.status(500).json({ message: 'Server error while updating lesson credits' });
+            console.error('Error completing lesson for all students:', error);
+            return res.status(500).json({ message: 'Server error while completing lesson' });
         }
     }
 

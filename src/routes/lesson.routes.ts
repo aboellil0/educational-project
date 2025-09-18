@@ -287,7 +287,7 @@ router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHo
  * @swagger
  * /lesson/{id}/complete:
  *   post:
- *     summary: Complete lesson
+ *     summary: Complete lesson for all students in the group who have credits
  *     tags: [Lessons]
  *     security:
  *       - bearerAuth: []
@@ -300,7 +300,7 @@ router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHo
  *         description: Lesson ID
  *     responses:
  *       200:
- *         description: Lesson completed successfully
+ *         description: Lesson completed successfully for all eligible students
  *         content:
  *           application/json:
  *             schema:
@@ -308,14 +308,92 @@ router.get('/:id/homework', isAuthenticated as any, lessonController.getLessonHo
  *               properties:
  *                 message:
  *                   type: string
- *                 lesson:
- *                   $ref: '#/components/schemas/Lesson'
+ *                   example: "Lesson completion processed for all eligible students"
+ *                 lessonId:
+ *                   type: string
+ *                   example: "507f1f77bcf86cd799439012"
+ *                 summary:
+ *                   type: object
+ *                   properties:
+ *                     totalEligibleStudents:
+ *                       type: number
+ *                       example: 5
+ *                     completedSuccessfully:
+ *                       type: number
+ *                       example: 4
+ *                     failed:
+ *                       type: number
+ *                       example: 1
+ *                     teacherCreditsAdded:
+ *                       type: number
+ *                       example: 4
+ *                 completedStudents:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       studentId:
+ *                         type: string
+ *                         example: "507f1f77bcf86cd799439011"
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       remainingCredits:
+ *                         type: object
+ *                         properties:
+ *                           private:
+ *                             type: number
+ *                             example: 4
+ *                           public:
+ *                             type: number
+ *                             example: 2
+ *                 failedStudents:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       studentId:
+ *                         type: string
+ *                         example: "507f1f77bcf86cd799439013"
+ *                       name:
+ *                         type: string
+ *                         example: "Jane Smith"
+ *                       reason:
+ *                         type: string
+ *                         example: "Lesson already completed for this student"
+ *       400:
+ *         description: Bad request - Invalid lesson ID or no students with credits
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     invalidLessonId:
+ *                       value: "Invalid lesson ID"
+ *                     noStudentsWithCredits:
+ *                       value: "No students with sufficient credits found in this group"
  *       404:
- *         description: Lesson not found
+ *         description: Lesson or group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     lessonNotFound:
+ *                       value: "Lesson not found"
+ *                     groupNotFound:
+ *                       value: "Group not found"
  *       401:
  *         description: Unauthorized
+ *       500:
+ *         description: Server error
  */
-router.post('/:id/complete', isAuthenticated as any, lessonController.completeLesson as any);
 
 /**
  * @swagger
