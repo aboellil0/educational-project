@@ -3,6 +3,7 @@ import User, { IUser } from "../models/user.model";
 import Lesson,{ILesson} from "../models/lesson.model";
 import LessonReport,{ILessonReport} from "../models/lessonReport.model";
 import LessonGroup from "../models/lessonGroup.model";
+import Teacher from "../models/teacher.model";
 // Custom error handler
 const handleError = (res: Response, error: any, message: string) => {
     console.error(`Error ${message}:`, error);
@@ -19,6 +20,20 @@ export const getUserProfile = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "User not found" });
         }
         
+        if (userRole === 'teacher') {
+            // if the user is teacher get all the teacher information from teacher model additional it's user information
+            const teacher = await Teacher.findOne({ userId: userId }).populate('userId', '-password');
+            if (!teacher) {
+                return res.status(404).json({ message: "Teacher profile not found" });
+            }
+            return res.status(200).json({
+                success: true,   
+                message: "Teacher profile retrieved successfully",
+                data: { teacher, user },
+                userRole: userRole
+            });
+        }   
+
         return res.status(200).json({
             success: true,
             message: "User profile retrieved successfully",
