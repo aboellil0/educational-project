@@ -65,22 +65,7 @@ export class GroupController {
                 return res.status(404).json({ message: 'Group not found' });
             }
 
-            // Filter members with credits >= 1
-            const eligibleMembers = group.members.filter((member: any) => 
-                (member.PrivitelessonCredits && member.PrivitelessonCredits >= 1) ||
-                (member.PubliclessonCredits && member.PubliclessonCredits >= 1)
-            );
-
-            const response = {
-                group: {
-                    ...group.toObject(),
-                    members: eligibleMembers, // Only members with credits >= 1
-                    totalEligibleMembers: eligibleMembers.length,
-                    allMembers: group.members // Keep all members if needed
-                }
-            };
-
-            res.status(200).json(response);
+            res.status(200).json(group);
         } catch (error) {
             res.status(500).json({ message: 'Server error', error });
         }
