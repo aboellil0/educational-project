@@ -78,12 +78,12 @@ export class TeacherController {
 
     async updateTeacher(req: Request, res: Response){
         const { id } = req.params;
-        const { specialization, meetingLink, availability,name,email,phone,city,country } = req.body;
+        const { specialization, meetingLink, availability,name,email,phone,city,country,numberOflessonsCridets } = req.body;
 
         try {
             const updatedTeacher: ITeacher | null = await Teacher.findByIdAndUpdate(
                 id,
-                { specialization, meetingLink, availability },
+                { specialization, meetingLink, availability, numberOflessonsCridets },
                 { new: true }
             ).populate('userId', 'name email phone');
             
