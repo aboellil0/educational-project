@@ -13,7 +13,7 @@ const handleError = (res: Response, error: any, message: string) => {
 export const getUserProfile = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user._id;
-        const userRole = (req as any).role;
+        const userRole = (req as any).user.role;
         const user = await User.findById(userId).select('-password'); // Exclude password
         
         if (!user) {
