@@ -40,7 +40,7 @@ const lessonReportSchema = new Schema<ILessonReport>({
     newMemorized: {
         new: [{ type: String }],
         old: [{ type: String }],
-        ratingNew: { type: Number, min: 0, max: 5, default: 0 },
+        ratingOld: { type: Number, min: 0, max: 5, default: 0 },
     },
     wantedForNextLesson: {
         new: [{ type: String }],
