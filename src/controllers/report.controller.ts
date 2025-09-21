@@ -49,7 +49,8 @@ export class ReportController {
                 newMemorized : {
                     new: newMemorized.new,
                     old: newMemorized.old,
-                    ratingOld: newMemorized.ratingOld
+                    ratingOld: newMemorized.ratingOld,
+                    ratingNew: newMemorized.ratingNew
                 },
                 wantedForNextLesson: {
                     new: wantedForNextLesson.new,

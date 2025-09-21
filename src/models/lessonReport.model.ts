@@ -15,10 +15,10 @@ export interface ILessonReport extends Document {
     completeLesson?: boolean; // Indicates if the lesson was completed
     content: string; // Text content of the report
     newMemorized: {
-        ratingNew: number;
         new: string[];
-        ratingOld: number;
         old: string[];
+        ratingOld: number;
+        ratingNew: number;
     };
     notes?: string; // Additional notes
     rating?: number; // Rating out of 5
@@ -41,6 +41,7 @@ const lessonReportSchema = new Schema<ILessonReport>({
         new: [{ type: String }],
         old: [{ type: String }],
         ratingOld: { type: Number, min: 0, max: 5, default: 0 },
+        ratingNew: { type: Number, min: 0, max: 5, default: 0 },
     },
     wantedForNextLesson: {
         new: [{ type: String }],
