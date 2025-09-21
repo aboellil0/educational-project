@@ -48,7 +48,8 @@ export class ReportController {
                 content,
                 newMemorized : {
                     new: newMemorized.new,
-                    old: newMemorized.old
+                    old: newMemorized.old,
+                    ratingOld: newMemorized.ratingOld
                 },
                 wantedForNextLesson: {
                     new: wantedForNextLesson.new,
