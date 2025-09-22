@@ -122,7 +122,7 @@ export class AdminController {
 
     async updateContactInfo(req: Request, res: Response) {
         try {
-            const { email, phone, address, whatsappNumber,telegramLink, facebook, linkedin } = req.body;
+            const { email, phone, address, whatsappNumber, telegramLink, facebook, linkedin } = req.body;
             
             // Find the first contact info document or create if none exists
             let contactInfo = await ContactInfo.findOne();
@@ -130,14 +130,14 @@ export class AdminController {
                 contactInfo = new ContactInfo({});
             }
 
-            // Update fields if provided
-            if (email) contactInfo.email = email;
-            if (phone) contactInfo.phone = phone;
-            if (address) contactInfo.address = address;
-            if (whatsappNumber) contactInfo.whatsappNumber = whatsappNumber;
-            if (facebook) contactInfo.facebook = facebook;
-            if (telegramLink) contactInfo.telegramLink = telegramLink;
-            if (linkedin) contactInfo.linkedin = linkedin;
+            // Update fields with provided values, including null or empty string
+            contactInfo.email = email;
+            contactInfo.phone = phone;
+            contactInfo.address = address;
+            contactInfo.whatsappNumber = whatsappNumber;
+            contactInfo.facebook = facebook;
+            contactInfo.telegramLink = telegramLink;
+            contactInfo.linkedin = linkedin;
 
             await contactInfo.save();
             return res.status(200).json(contactInfo);
