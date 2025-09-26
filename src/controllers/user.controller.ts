@@ -334,9 +334,13 @@ export const getUserStats = async (req: Request, res: Response) => {
         // completed lessons inside the group that student is part of
         const userGroup = await LessonGroup.findOne({ members: userId });
         if (!userGroup) {
-            return res.status(404).json({ 
-                success: false,
-                message: "User group not found" 
+            return res.status(200).json({ 
+                success: true,
+                message: "User group not found",
+                data: {
+                    PrivitelessonCredits: user.PrivitelessonCredits,
+                    PubliclessonCredits: user.PubliclessonCredits,
+                },
             });
         }
 
